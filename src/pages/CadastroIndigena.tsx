@@ -4,6 +4,8 @@ import { indigenas } from '../data/mockData';
 import { db } from '../services/mockDatabase';
 import { UserPlus, Search, Eye, X } from 'lucide-react';
 import { formatNomeComMae, formatDateBR } from '../utils/formatters';
+import { useFilters } from '../hooks/useFilters';
+import { DataFilterPanel, FilterConfig } from '../components/ui/DataFilterPanel';
 
 import TagInput from '../components/TagInput';
 
@@ -23,7 +25,14 @@ const emptyForm = {
 
 export default function CadastroIndigena({ showToast }: Props) {
   const [lista, setLista] = useState<Indigena[]>(indigenas);
-  const [busca, setBusca] = useState('');
+  const { filters, setFilter, resetFilters } = useFilters({
+    busca: '',
+    poloBaseId: '',
+    aldeiaId: '',
+    etnia: '',
+    acamado: false,
+    contraindicacao: false
+  });
   const [form, setForm] = useState(emptyForm);
   const [tab, setTab] = useState<'lista' | 'novo'>('lista');
   const [detalhe, setDetalhe] = useState<Indigena | null>(null);
@@ -36,12 +45,27 @@ export default function CadastroIndigena({ showToast }: Props) {
     ? aldeias.filter(a => a.poloBaseId === form.poloBaseId)
     : aldeias;
 
-  const listaFiltrada = lista.filter(ind =>
-    ind.nome.toLowerCase().includes(busca.toLowerCase()) ||
-    ind.cns.includes(busca) ||
-    ind.aldeia.toLowerCase().includes(busca.toLowerCase()) ||
-    ind.poloBase.toLowerCase().includes(busca.toLowerCase())
-  );
+  const listaFiltrada = lista.filter(ind => {
+    if (filters.busca && !(
+      ind.nome.toLowerCase().includes(filters.busca.toLowerCase()) ||
+      ind.cns.includes(filters.busca)
+    )) return false;
+    if (filters.poloBaseId && ind.poloBaseId !== filters.poloBaseId) return false;
+    if (filters.aldeiaId && ind.aldeiaId !== filters.aldeiaId) return false;
+    if (filters.etnia && ind.etnia !== filters.etnia) return false;
+    if (filters.acamado && !ind.acamado) return false;
+    if (filters.contraindicacao && ind.contraindicacoes.length === 0) return false;
+    return true;
+  });
+
+  const filterConfig: FilterConfig<typeof filters>[] = [
+    { key: 'busca', label: 'Busca', type: 'text', placeholder: 'Nome ou CNS...' },
+    { key: 'poloBaseId', label: 'Polo Base', type: 'select', options: polosBase.map(p => ({ value: p.id, label: p.nome })) },
+    { key: 'aldeiaId', label: 'Aldeia', type: 'select', options: aldeias.map(a => ({ value: a.id, label: a.nome })) },
+    { key: 'etnia', label: 'Etnia', type: 'select', options: etnias.map(e => ({ value: e.nome, label: e.nome })) },
+    { key: 'acamado', label: 'Acamados', type: 'boolean' },
+    { key: 'contraindicacao', label: 'Com Contraindicação', type: 'boolean' },
+  ];
 
   const handleSalvar = (e: React.FormEvent) => {
     e.preventDefault();
@@ -113,16 +137,13 @@ export default function CadastroIndigena({ showToast }: Props) {
       {/* ——— LISTA ——— */}
       {tab === 'lista' && (
         <div>
-          <div className="search-wrap" style={{ marginBottom: '1rem' }}>
-            <Search size={14} className="search-icon" />
-            <input
-              className="input"
-              type="text"
-              placeholder="Buscar por nome, CNS, aldeia ou polo base..."
-              value={busca}
-              onChange={e => setBusca(e.target.value)}
-            />
-          </div>
+        <div>
+          <DataFilterPanel 
+            filters={filters} 
+            config={filterConfig} 
+            onFilterChange={setFilter as any} 
+            onClear={resetFilters} 
+          />
 
           <div className="table-wrap">
             <table className="ds-table">

@@ -4,6 +4,8 @@ import { indigenas, vacinas, vacinadores, dosesAplicadas } from '../data/mockDat
 import { Syringe, Search, AlertTriangle, AlertCircle } from 'lucide-react';
 import { isVacinaForaCalendario } from '../utils/vacinas';
 import { formatDateBR } from '../utils/formatters';
+import { useFilters } from '../hooks/useFilters';
+import { DataFilterPanel, FilterConfig } from '../components/ui/DataFilterPanel';
 
 type Props = { showToast: (msg: string, type?: 'success' | 'error' | 'default') => void };
 
@@ -23,6 +25,11 @@ export default function RegistrarVacina({ showToast }: Props) {
   const [buscaOpen, setBuscaOpen] = useState(false);
   const [form, setForm] = useState(emptyForm);
   const [doses, setDoses] = useState<DoseAplicada[]>(dosesAplicadas);
+  const { filters, setFilter, resetFilters } = useFilters({
+    vacinaId: '',
+    vacinador: '',
+    numeroDose: ''
+  });
   const [tab, setTab] = useState<'registrar' | 'historico'>('registrar');
   const [showJustificativa, setShowJustificativa] = useState(false);
   const [justificativa, setJustificativa] = useState('');
@@ -38,6 +45,19 @@ export default function RegistrarVacina({ showToast }: Props) {
         )
       )
     : [];
+
+  const historicoFiltrado = doses.filter(d => {
+    if (filters.vacinaId && d.vacinaId !== filters.vacinaId) return false;
+    if (filters.vacinador && d.vacinador !== filters.vacinador) return false;
+    if (filters.numeroDose && d.numeroDose !== filters.numeroDose) return false;
+    return true;
+  });
+
+  const filterConfig: FilterConfig<typeof filters>[] = [
+    { key: 'vacinaId', label: 'Vacina', type: 'select', options: vacinas.map(v => ({ value: v.id, label: v.sigla })) },
+    { key: 'vacinador', label: 'Vacinador', type: 'select', options: vacinadores.map(v => ({ value: v.nome, label: v.nome })) },
+    { key: 'numeroDose', label: 'Dose', type: 'select', options: numerosDose.map(d => ({ value: d, label: d })) },
+  ];
 
   const handleSalvar = (e: React.FormEvent) => {
     e.preventDefault();
@@ -305,7 +325,14 @@ export default function RegistrarVacina({ showToast }: Props) {
 
       {/* HISTÓRICO */}
       {tab === 'historico' && (
-        <div className="table-wrap">
+        <div>
+          <DataFilterPanel 
+            filters={filters} 
+            config={filterConfig} 
+            onFilterChange={setFilter as any} 
+            onClear={resetFilters} 
+          />
+          <div className="table-wrap">
           <table className="ds-table">
             <thead>
               <tr>
@@ -319,7 +346,7 @@ export default function RegistrarVacina({ showToast }: Props) {
               </tr>
             </thead>
             <tbody>
-              {doses.map(d => {
+              {historicoFiltrado.map(d => {
                 const ind = indigenas.find(i => i.id === d.indigenaId);
                 return (
                   <tr key={d.id}>
@@ -342,6 +369,7 @@ export default function RegistrarVacina({ showToast }: Props) {
               })}
             </tbody>
           </table>
+        </div>
         </div>
       )}
 
