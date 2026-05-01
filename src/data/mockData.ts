@@ -1,29 +1,37 @@
 export const polosBase = [
-  { id: 'PB001', nome: 'Polo Base Alto Solimões', municipio: 'Tabatinga' },
-  { id: 'PB002', nome: 'Polo Base Médio Solimões', municipio: 'Tefé' },
-  { id: 'PB003', nome: 'Polo Base Purus', municipio: 'Lábrea' },
-  { id: 'PB004', nome: 'Polo Base Vale do Javari', municipio: 'Atalaia do Norte' },
-  { id: 'PB005', nome: 'Polo Base Rio Negro', municipio: 'Barcelos' },
+  { id: 'PB001', nome: 'Polo Base Alto Solimões', municipio: 'Tabatinga', ativo: true },
+  { id: 'PB002', nome: 'Polo Base Médio Solimões', municipio: 'Tefé', ativo: true },
+  { id: 'PB003', nome: 'Polo Base Purus', municipio: 'Lábrea', ativo: true },
+  { id: 'PB004', nome: 'Polo Base Vale do Javari', municipio: 'Atalaia do Norte', ativo: true },
+  { id: 'PB005', nome: 'Polo Base Rio Negro', municipio: 'Barcelos', ativo: true },
 ];
 
 export const aldeias = [
-  { id: 'ALD001', nome: 'Aldeia Umariaçu I', poloBaseId: 'PB001' },
-  { id: 'ALD002', nome: 'Aldeia Umariaçu II', poloBaseId: 'PB001' },
-  { id: 'ALD003', nome: 'Aldeia São João', poloBaseId: 'PB001' },
-  { id: 'ALD004', nome: 'Aldeia Betel', poloBaseId: 'PB002' },
-  { id: 'ALD005', nome: 'Aldeia Nogueira', poloBaseId: 'PB002' },
-  { id: 'ALD006', nome: 'Aldeia Maraã', poloBaseId: 'PB002' },
-  { id: 'ALD007', nome: 'Aldeia Pauini', poloBaseId: 'PB003' },
-  { id: 'ALD008', nome: 'Aldeia Tapauá', poloBaseId: 'PB003' },
-  { id: 'ALD009', nome: 'Aldeia Ituí', poloBaseId: 'PB004' },
-  { id: 'ALD010', nome: 'Aldeia Itacoaí', poloBaseId: 'PB004' },
-  { id: 'ALD011', nome: 'Aldeia Demini', poloBaseId: 'PB005' },
-  { id: 'ALD012', nome: 'Aldeia Maturacá', poloBaseId: 'PB005' },
+  { id: 'ALD001', nome: 'Aldeia Umariaçu I', poloBaseId: 'PB001', ativo: true },
+  { id: 'ALD002', nome: 'Aldeia Umariaçu II', poloBaseId: 'PB001', ativo: true },
+  { id: 'ALD003', nome: 'Aldeia São João', poloBaseId: 'PB001', ativo: true },
+  { id: 'ALD004', nome: 'Aldeia Betel', poloBaseId: 'PB002', ativo: true },
+  { id: 'ALD005', nome: 'Aldeia Nogueira', poloBaseId: 'PB002', ativo: true },
+  { id: 'ALD006', nome: 'Aldeia Maraã', poloBaseId: 'PB002', ativo: true },
+  { id: 'ALD007', nome: 'Aldeia Pauini', poloBaseId: 'PB003', ativo: true },
+  { id: 'ALD008', nome: 'Aldeia Tapauá', poloBaseId: 'PB003', ativo: true },
+  { id: 'ALD009', nome: 'Aldeia Ituí', poloBaseId: 'PB004', ativo: true },
+  { id: 'ALD010', nome: 'Aldeia Itacoaí', poloBaseId: 'PB004', ativo: true },
+  { id: 'ALD011', nome: 'Aldeia Demini', poloBaseId: 'PB005', ativo: true },
+  { id: 'ALD012', nome: 'Aldeia Maturacá', poloBaseId: 'PB005', ativo: true },
 ];
 
 export const etnias = [
-  'Tikuna', 'Yanomami', 'Sateré-Mawé', 'Kokama', 'Baré',
-  'Matis', 'Kanamari', 'Paumari', 'Banawá', 'Deni',
+  { id: 'ETN001', nome: 'Tikuna', ativo: true },
+  { id: 'ETN002', nome: 'Yanomami', ativo: true },
+  { id: 'ETN003', nome: 'Sateré-Mawé', ativo: true },
+  { id: 'ETN004', nome: 'Kokama', ativo: true },
+  { id: 'ETN005', nome: 'Baré', ativo: true },
+  { id: 'ETN006', nome: 'Matis', ativo: true },
+  { id: 'ETN007', nome: 'Kanamari', ativo: true },
+  { id: 'ETN008', nome: 'Paumari', ativo: true },
+  { id: 'ETN009', nome: 'Banawá', ativo: true },
+  { id: 'ETN010', nome: 'Deni', ativo: true },
 ];
 
 export const vacinadores = [
@@ -50,6 +58,14 @@ export const vacinas = [
   { id: 'V013', nome: 'dT (Dupla adulto)', sigla: 'dT', doses: 3, faixaEtaria: 'A partir de 7 anos', fabricante: 'Bio-Manguinhos' },
 ];
 
+export type Medicamento = {
+  id: string;
+  nome: string;
+  dosagem?: string;
+  frequencia?: string;
+  observacoes?: string;
+};
+
 export type Indigena = {
   id: string;
   nome: string;
@@ -68,6 +84,9 @@ export type Indigena = {
   situacao: 'PRESENTE' | 'AUSENTE' | 'OBITO';
   contraindicacoes: string[];
   comorbidades: string[];
+  emTratamento?: boolean;
+  tratamentoDescricao?: string | null;
+  medicamentosEmUso?: Medicamento[];
 };
 
 export const indigenas: Indigena[] = [

@@ -225,7 +225,7 @@ export default function CadastroIndigena({ showToast }: Props) {
               {field('Etnia', (
                 <select className="select" value={form.etnia} onChange={e => setForm({ ...form, etnia: e.target.value })}>
                   <option value="">Selecione...</option>
-                  {etnias.map(e => <option key={e} value={e}>{e}</option>)}
+                  {etnias.map(e => <option key={e.id} value={e.nome}>{e.nome}</option>)}
                 </select>
               ))}
               {field('Situação', (
