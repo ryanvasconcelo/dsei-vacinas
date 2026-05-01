@@ -98,8 +98,65 @@ export function sugerirProximasDoses(
   return sugestoes;
 }
 
-export function validarAplicacao() {
-    // TODO: Implementar Task 4
+export function validarAplicacao(
+  paciente: Indigena,
+  vacinaId: string,
+  numeroDose: number | string,
+  dataAplicacao: Date,
+  dosesJaAplicadas: DoseAplicada[]
+): ResultadoValidacao {
+  const regra = regrasVacinais.find(r => r.imunobiologicoId === vacinaId);
+  if (!regra) {
+    return { valido: true, motivo: null, severidade: 'OK', requerJustificativa: false };
+  }
+
+  const dataNasc = startOfDay(parseISO(paciente.dataNascimento));
+  const dataAppStart = startOfDay(dataAplicacao);
+  const idadeEmDias = differenceInCalendarDays(dataAppStart, dataNasc);
+
+  // 1. Validar Idade Mínima/Máxima
+  const doseRegra = regra.doses.find(d => String(d.numeroDose) === String(numeroDose)) || regra.doses[0];
+
+  if (idadeEmDias < doseRegra.idadeMinimaDias) {
+    return {
+      valido: false,
+      motivo: `Idade mínima para esta dose é ${doseRegra.idadeMinimaDias} dias. Paciente tem ${idadeEmDias} dias.`,
+      severidade: 'BLOQUEIO',
+      requerJustificativa: true
+    };
+  }
+
+  if (doseRegra.idadeMaximaDias && idadeEmDias > doseRegra.idadeMaximaDias) {
+    // Exceção: Varicela Indígena sem limite
+    const isVaricelaIndigena = vacinaId === 'vcz' && paciente.etnia;
+    if (!isVaricelaIndigena) {
+      return {
+        valido: false,
+        motivo: `Idade máxima para esta dose é ${doseRegra.idadeMaximaDias} dias. Paciente tem ${idadeEmDias} dias.`,
+        severidade: 'ALERTA',
+        requerJustificativa: true
+      };
+    }
+  }
+
+  // 2. Validar Intervalo Mínimo
+  const dosesDestaVacina = dosesJaAplicadas.filter(d => d.vacinaId === vacinaId);
+  if (dosesDestaVacina.length > 0) {
+    const ultimaDose = dosesDestaVacina[dosesDestaVacina.length - 1];
+    const dataUltima = startOfDay(parseISO(ultimaDose.dataAplicacao));
+    const diasDesdeUltima = differenceInCalendarDays(dataAppStart, dataUltima);
+
+    if (diasDesdeUltima < regra.intervaloMinimoEntreDoses) {
+      return {
+        valido: false,
+        motivo: `Intervalo mínimo de ${regra.intervaloMinimoEntreDoses} dias não respeitado. Passaram-se apenas ${diasDesdeUltima} dias.`,
+        severidade: 'BLOQUEIO',
+        requerJustificativa: true
+      };
+    }
+  }
+
+  return { valido: true, motivo: null, severidade: 'OK', requerJustificativa: false };
 }
 
 export function validarSimultaneidade() {

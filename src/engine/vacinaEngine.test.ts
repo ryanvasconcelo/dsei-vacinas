@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { sugerirProximasDoses } from './vacinaEngine';
+import { sugerirProximasDoses, validarAplicacao } from './vacinaEngine';
 import { Indigena, DoseAplicada } from '../data/mockData';
 import { parseISO } from 'date-fns';
 
@@ -59,5 +59,48 @@ describe('vacinaEngine - sugerirProximasDoses', () => {
     // Intervalo de 1 mês para D2 no esquema acelerado
     expect(hepbSugestao?.numeroDose).toBe('2');
     expect(hepbSugestao?.status).toBe('EM_DIA');
+  });
+});
+
+describe('vacinaEngine - validarAplicacao', () => {
+  const pacienteBebe = {
+    id: 'P001',
+    dataNascimento: '2026-03-01',
+    etnia: 'Tikuna',
+    situacao: 'PRESENTE'
+  } as Indigena;
+
+  const hoje = parseISO('2026-05-01'); // 2 meses
+
+  it('deve validar positivamente uma aplicação correta (Penta aos 2 meses)', () => {
+    const resultado = validarAplicacao(pacienteBebe, 'penta', 1, hoje, []);
+    expect(resultado.valido).toBe(true);
+    expect(resultado.severidade).toBe('OK');
+  });
+
+  it('deve bloquear aplicação se idade for inferior à mínima (Penta aos 1 mês)', () => {
+    const hojeCedo = parseISO('2026-04-01');
+    const resultado = validarAplicacao(pacienteBebe, 'penta', 1, hojeCedo, []);
+    expect(resultado.valido).toBe(false);
+    expect(resultado.severidade).toBe('BLOQUEIO');
+    expect(resultado.motivo).toContain('Idade mínima');
+  });
+
+  it('deve alertar se intervalo entre doses for inferior ao mínimo', () => {
+    // D1 aplicada com 90 dias (limite inferior da D1)
+    const dataD1 = parseISO('2026-06-01'); // 3 meses
+    const doses: DoseAplicada[] = [{
+      id: 'D1', vacinaId: 'penta', numeroDose: '1', dataAplicacao: '2026-06-01',
+      indigenaId: 'P001', vacinaNome: 'Penta', vacinaSigla: 'Penta', lote: 'X', fabricante: 'Y', 
+      validadeLote: 'Z', viaAdministracao: 'IM', localAplicacao: 'Coxa', vacinador: 'E1', observacoes: '', justificativaForaCalendario: null
+    }];
+    
+    // Tenta D2 apenas 10 dias depois (com 100 dias de vida, idade OK para D2, mas intervalo NO)
+    const hojeProximo = parseISO('2026-06-11');
+    const resultado = validarAplicacao(pacienteBebe, 'penta', 2, hojeProximo, doses);
+    
+    expect(resultado.valido).toBe(false);
+    expect(resultado.severidade).toBe('BLOQUEIO');
+    expect(resultado.motivo).toContain('Intervalo mínimo');
   });
 });
