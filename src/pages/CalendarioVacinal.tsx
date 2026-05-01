@@ -1,28 +1,15 @@
 import React, { useState } from 'react';
 import { Search, BookOpen, Info, ShieldAlert, FileText, ChevronRight, Filter } from 'lucide-react';
 
-const notasTecnicas = [
-  {
-    id: 'NT01',
-    titulo: 'Pneumo 23 em População Indígena',
-    data: '2026-02-15',
-    conteudo: 'A vacina Pneumocócica 23-valente (polissacarídica) está indicada para a população indígena a partir dos 5 anos de idade, sem necessidade de comprovação de comorbidade, conforme Manual de Normas 2026.',
-    severidade: 'INFO'
-  },
-  {
-    id: 'NT02',
-    titulo: 'Varicela: Sem Limite de Idade',
-    data: '2026-03-01',
-    conteudo: 'Diferente da população geral, para os povos indígenas a vacina Varicela não possui limite de idade superior para resgate. Deve ser ofertada a todos não vacinados ou sem histórico da doença.',
-    severidade: 'URGENTE'
-  },
-  {
-    id: 'NT03',
-    titulo: 'Simultaneidade SCR + Febre Amarela',
-    data: '2026-01-10',
-    conteudo: 'Em crianças menores de 2 anos, as vacinas SCR e Febre Amarela não devem ser aplicadas simultaneamente. Respeitar intervalo mínimo de 30 dias entre as doses.',
-    severidade: 'BLOQUEIO'
-  }
+const notasTecnicasIniciais = [
+  { id: 'NT 23/2025', titulo: 'Influenza - Campanha 2026', data: '2025-04-10', vacinas: ['influenza'], conteudo: 'Orientações sobre a composição da vacina trivalente e grupos prioritários (incluindo povos indígenas).', severidade: 'INFO' },
+  { id: 'NT 39/2025', titulo: 'Febre Amarela em Idosos', data: '2025-06-15', vacinas: ['fa'], conteudo: 'Protocolo de avaliação de risco-benefício para primeira dose em pessoas acima de 60 anos.', severidade: 'ALERTA' },
+  { id: 'NT 49/2025', titulo: 'SCR e Alergia à Lactoalbumina', data: '2025-08-20', vacinas: ['scr'], conteudo: 'Procedimentos para vacinação de crianças com histórico de alergia grave a componentes do ovo.', severidade: 'ALERTA' },
+  { id: 'NT 165/2025', titulo: 'Atualização Coqueluche (dTpa)', data: '2025-11-05', vacinas: ['dtpa'], conteudo: 'Ampliação da oferta de dTpa para profissionais de saúde e estagiários da área.', severidade: 'INFO' },
+  { id: 'NT 14/2025', titulo: 'Manejo de Anafilaxia', data: '2025-02-12', vacinas: [], conteudo: 'Protocolo de urgência para eventos adversos graves pós-vacinação.', severidade: 'BLOQUEIO' },
+  { id: 'NT 27/2025', titulo: 'Febre Amarela Conjunta', data: '2025-05-22', vacinas: ['fa'], conteudo: 'Estratégia de vacinação em massa em territórios com circulação viral ativa.', severidade: 'URGENTE' },
+  { id: 'NT 06/2026', titulo: 'Dose Fracionada Febre Amarela', data: '2026-01-15', vacinas: ['fa'], conteudo: 'Regras para utilização de doses fracionadas em situações de desabastecimento ou surto.', severidade: 'INFO' },
+  { id: 'NT 02/2026', titulo: 'Varicela: Sem Limite para Indígenas', data: '2026-03-01', vacinas: ['vcz'], conteudo: 'Para povos indígenas, a vacina Varicela não possui limite de idade superior para resgate.', severidade: 'URGENTE' },
 ];
 
 const calendarioData = [
@@ -77,6 +64,17 @@ export default function CalendarioVacinal() {
   const [busca, setBusca] = useState('');
   const [filtroFaixa, setFiltroFaixa] = useState('TODOS');
   const [ntAberta, setNtAberta] = useState<string | null>(null);
+  const [notas, setNotas] = useState(notasTecnicasIniciais);
+  const [adminMode, setAdminMode] = useState(false);
+  const [showAddNt, setShowAddNt] = useState(false);
+  const [newNt, setNewNt] = useState({ id: '', titulo: '', conteudo: '', severidade: 'INFO' as const });
+
+  const handleAddNt = (e: React.FormEvent) => {
+    e.preventDefault();
+    setNotas(prev => [{ ...newNt, data: new Date().toISOString().split('T')[0], vacinas: [] }, ...prev]);
+    setShowAddNt(false);
+    setNewNt({ id: '', titulo: '', conteudo: '', severidade: 'INFO' });
+  };
 
   const dadosFiltrados = calendarioData.filter(g => 
     filtroFaixa === 'TODOS' || g.faixaEtaria === filtroFaixa
@@ -84,7 +82,10 @@ export default function CalendarioVacinal() {
     ...g,
     vacinas: g.vacinas.filter(v => 
       v.nome.toLowerCase().includes(busca.toLowerCase()) || 
-      v.obs.toLowerCase().includes(busca.toLowerCase())
+      v.obs.toLowerCase().includes(busca.toLowerCase()) ||
+      // Busca por "sintoma/condição" nos metadados ou obs
+      (busca.toLowerCase() === 'gestante' && g.faixaEtaria === 'Gestantes') ||
+      (busca.toLowerCase() === 'idoso' && g.faixaEtaria.includes('60 anos'))
     )
   })).filter(g => g.vacinas.length > 0);
 
@@ -102,11 +103,70 @@ export default function CalendarioVacinal() {
           <p className="text-slate-500 text-sm">Biblioteca de consulta técnica e calendário para populações indígenas</p>
         </div>
         <div className="flex items-center gap-2">
+          <button className={`btn btn-sm ${adminMode ? 'btn-primary' : 'btn-ghost border border-slate-200'}`} onClick={() => setAdminMode(!adminMode)}>
+            {adminMode ? 'Sair do Modo Admin' : 'Modo Admin (NTs)'}
+          </button>
           <button className="btn btn-ghost btn-sm border border-slate-200">
             <FileText size={14} className="mr-2" /> PDF Completo (53p)
           </button>
         </div>
       </div>
+
+      {adminMode && (
+        <div className="card bg-indigo-50 border-indigo-200 p-4 mb-6">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-sm font-bold text-indigo-900 uppercase">Painel de Gerenciamento de Notas Técnicas</h3>
+            <button className="btn btn-primary btn-sm" onClick={() => setShowAddNt(true)}>+ Nova Nota Técnica</button>
+          </div>
+          <p className="text-xs text-indigo-700">Como administrador, você pode cadastrar novas diretrizes que aparecerão na biblioteca para todos os vacinadores.</p>
+        </div>
+      )}
+
+      {showAddNt && (
+        <div className="modal-overlay" onClick={() => setShowAddNt(false)}>
+          <div className="modal" onClick={e => e.stopPropagation()} style={{ maxWidth: 500 }}>
+            <div className="modal-header">
+              <div className="modal-title">Cadastrar Nova Nota Técnica</div>
+              <button className="modal-close" onClick={() => setShowAddNt(false)}>×</button>
+            </div>
+            <form onSubmit={handleAddNt} className="space-y-4 p-4">
+              <div className="grid-2 gap-4">
+                <div>
+                  <label className="text-xs font-bold text-slate-500 mb-1 block">Número/ID da NT</label>
+                  <input className="input" placeholder="Ex: NT 15/2026" required value={newNt.id} onChange={e => setNewNt({...newNt, id: e.target.value})} />
+                </div>
+                <div>
+                  <label className="text-xs font-bold text-slate-500 mb-1 block">Severidade</label>
+                  <select className="select" value={newNt.severidade} onChange={e => setNewNt({...newNt, severidade: e.target.value as any})}>
+                    <option value="INFO">Informativa</option>
+                    <option value="ALERTA">Alerta</option>
+                    <option value="URGENTE">Urgente</option>
+                    <option value="BLOQUEIO">Bloqueio Normativo</option>
+                  </select>
+                </div>
+              </div>
+              <div>
+                <label className="text-xs font-bold text-slate-500 mb-1 block">Título</label>
+                <input className="input" placeholder="Ex: Protocolo de Vacinação em Área de Surto" required value={newNt.titulo} onChange={e => setNewNt({...newNt, titulo: e.target.value})} />
+              </div>
+              <div>
+                <label className="text-xs font-bold text-slate-500 mb-1 block">Conteúdo/Resumo Técnico</label>
+                <textarea className="textarea" style={{ minHeight: 100 }} placeholder="Descreva a regra técnica..." required value={newNt.conteudo} onChange={e => setNewNt({...newNt, conteudo: e.target.value})} />
+              </div>
+              <div>
+                <label className="text-xs font-bold text-slate-500 mb-1 block">Anexo PDF (Simulado)</label>
+                <div className="border-2 border-dashed border-slate-200 rounded-lg p-4 text-center text-slate-400 text-xs">
+                  Arraste o PDF da Nota Técnica aqui
+                </div>
+              </div>
+              <div className="modal-footer flex gap-2 justify-end">
+                <button type="button" className="btn btn-ghost btn-sm" onClick={() => setShowAddNt(false)}>Cancelar</button>
+                <button type="submit" className="btn btn-primary btn-sm">Salvar Nota Técnica</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* COLUNA ESQUERDA: CALENDÁRIO */}
@@ -181,7 +241,7 @@ export default function CalendarioVacinal() {
             </p>
             
             <div className="space-y-3 relative z-10">
-              {notasTecnicas.map(nt => (
+              {notas.map(nt => (
                 <div 
                   key={nt.id} 
                   className={`p-3 rounded-xl cursor-pointer transition-all border ${
@@ -191,9 +251,9 @@ export default function CalendarioVacinal() {
                 >
                   <div className="flex items-center justify-between mb-1">
                     <span className="text-[10px] font-bold opacity-60">{nt.id} · {nt.data}</span>
-                    {nt.severidade === 'URGENTE' && (
-                      <span className="w-2 h-2 rounded-full bg-orange-400 animate-pulse" />
-                    )}
+                    {nt.severidade === 'URGENTE' || nt.severidade === 'BLOQUEIO' ? (
+                      <span className={`w-2 h-2 rounded-full animate-pulse ${nt.severidade === 'BLOQUEIO' ? 'bg-red-500' : 'bg-orange-400'}`} />
+                    ) : null}
                   </div>
                   <div className="font-bold text-sm flex items-center justify-between">
                     {nt.titulo}
