@@ -43,19 +43,19 @@ export const vacinadores = [
 ];
 
 export const vacinas = [
-  { id: 'V001', nome: 'BCG', sigla: 'BCG', doses: 1, faixaEtaria: 'Ao nascer', fabricante: 'Fund. Ataulpho de Paiva' },
-  { id: 'V002', nome: 'Hepatite B', sigla: 'HepB', doses: 3, faixaEtaria: 'Ao nascer', fabricante: 'Bio-Manguinhos' },
-  { id: 'V003', nome: 'Pentavalente', sigla: 'Penta', doses: 3, faixaEtaria: '2, 4 e 6 meses', fabricante: 'Bio-Manguinhos' },
-  { id: 'V004', nome: 'VIP (Poliomielite Inativada)', sigla: 'VIP', doses: 3, faixaEtaria: '2, 4 e 6 meses', fabricante: 'Bio-Manguinhos' },
-  { id: 'V005', nome: 'Pneumocócica 10V', sigla: 'PCV10', doses: 3, faixaEtaria: '2, 4 meses + reforço', fabricante: 'GSK' },
-  { id: 'V006', nome: 'Meningocócica C', sigla: 'MnC', doses: 2, faixaEtaria: '3 e 5 meses', fabricante: 'Novartis' },
-  { id: 'V007', nome: 'Rotavírus', sigla: 'RV1', doses: 2, faixaEtaria: '2 e 4 meses', fabricante: 'GSK' },
-  { id: 'V008', nome: 'Febre Amarela', sigla: 'FA', doses: 1, faixaEtaria: '9 meses', fabricante: 'Bio-Manguinhos' },
-  { id: 'V009', nome: 'Tríplice Viral (SCR)', sigla: 'SCR', doses: 2, faixaEtaria: '12 e 15 meses', fabricante: 'Bio-Manguinhos' },
-  { id: 'V010', nome: 'Varicela', sigla: 'VCZ', doses: 1, faixaEtaria: '15 meses', fabricante: 'GSK' },
-  { id: 'V011', nome: 'Hepatite A', sigla: 'HepA', doses: 1, faixaEtaria: '15 meses', fabricante: 'GSK' },
-  { id: 'V012', nome: 'HPV Quadrivalente', sigla: 'HPV4', doses: 2, faixaEtaria: '9-14 anos', fabricante: 'MSD' },
-  { id: 'V013', nome: 'dT (Dupla adulto)', sigla: 'dT', doses: 3, faixaEtaria: 'A partir de 7 anos', fabricante: 'Bio-Manguinhos' },
+  { id: 'bcg', nome: 'BCG', sigla: 'BCG', doses: 1, faixaEtaria: 'Ao nascer', fabricante: 'Fund. Ataulpho de Paiva' },
+  { id: 'hepb', nome: 'Hepatite B', sigla: 'HepB', doses: 3, faixaEtaria: 'Ao nascer', fabricante: 'Bio-Manguinhos' },
+  { id: 'penta', nome: 'Pentavalente', sigla: 'Penta', doses: 3, faixaEtaria: '2, 4 e 6 meses', fabricante: 'Bio-Manguinhos' },
+  { id: 'vip', nome: 'VIP (Poliomielite Inativada)', sigla: 'VIP', doses: 3, faixaEtaria: '2, 4 e 6 meses', fabricante: 'Bio-Manguinhos' },
+  { id: 'pcv10', nome: 'Pneumocócica 10V', sigla: 'PCV10', doses: 3, faixaEtaria: '2, 4 meses + reforço', fabricante: 'GSK' },
+  { id: 'mnc', nome: 'Meningocócica C', sigla: 'MnC', doses: 2, faixaEtaria: '3 e 5 meses', fabricante: 'Novartis' },
+  { id: 'rv1', nome: 'Rotavírus', sigla: 'RV1', doses: 2, faixaEtaria: '2 e 4 meses', fabricante: 'GSK' },
+  { id: 'fa', nome: 'Febre Amarela', sigla: 'FA', doses: 1, faixaEtaria: '9 meses', fabricante: 'Bio-Manguinhos' },
+  { id: 'scr', nome: 'Tríplice Viral (SCR)', sigla: 'SCR', doses: 2, faixaEtaria: '12 e 15 meses', fabricante: 'Bio-Manguinhos' },
+  { id: 'vcz', nome: 'Varicela', sigla: 'VCZ', doses: 1, faixaEtaria: '15 meses', fabricante: 'GSK' },
+  { id: 'hepa', nome: 'Hepatite A', sigla: 'HepA', doses: 1, faixaEtaria: '15 meses', fabricante: 'GSK' },
+  { id: 'hpv4', nome: 'HPV Quadrivalente', sigla: 'HPV4', doses: 2, faixaEtaria: '9-14 anos', fabricante: 'MSD' },
+  { id: 'dt', nome: 'dT (Dupla adulto)', sigla: 'dT', doses: 3, faixaEtaria: 'A partir de 7 anos', fabricante: 'Bio-Manguinhos' },
 ];
 
 export type Medicamento = {
