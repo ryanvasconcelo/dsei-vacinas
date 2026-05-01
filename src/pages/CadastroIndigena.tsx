@@ -8,6 +8,7 @@ import { useFilters } from '../hooks/useFilters';
 import { DataFilterPanel, FilterConfig } from '../components/ui/DataFilterPanel';
 
 import TagInput from '../components/TagInput';
+import MedicamentoList from '../components/MedicamentoList';
 
 type Props = { showToast: (msg: string, type?: 'success' | 'error' | 'default') => void };
 
@@ -21,6 +22,9 @@ const emptyForm = {
   acamado: false, condicaoSaude: '',
   contraindicacoes: [] as string[],
   comorbidades: [] as string[],
+  emTratamento: false,
+  tratamentoDescricao: '',
+  medicamentosEmUso: [] as any[],
 };
 
 export default function CadastroIndigena({ showToast }: Props) {
@@ -89,6 +93,9 @@ export default function CadastroIndigena({ showToast }: Props) {
       acamado: form.acamado,
       contraindicacoes: form.contraindicacoes,
       comorbidades: form.comorbidades,
+      emTratamento: form.emTratamento,
+      tratamentoDescricao: form.emTratamento ? form.tratamentoDescricao : null,
+      medicamentosEmUso: form.emTratamento ? form.medicamentosEmUso : [],
     };
     setLista(prev => [novo, ...prev]);
     setForm(emptyForm);
@@ -331,6 +338,27 @@ export default function CadastroIndigena({ showToast }: Props) {
             </div>
           </div>
 
+          <div className="card" style={{ marginBottom: '1.5rem' }}>
+            <div className="section-label">Tratamento e Medicamentos</div>
+            <label style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer', marginBottom: form.emTratamento ? 16 : 0 }}>
+              <input type="checkbox" checked={form.emTratamento}
+                onChange={e => setForm({ ...form, emTratamento: e.target.checked })}
+                style={{ width: 15, height: 15, accentColor: '#1A1916' }} />
+              <div>
+                <div style={{ fontSize: 12, fontWeight: 500, color: '#1A1916' }}>Paciente em Tratamento?</div>
+              </div>
+            </label>
+            {form.emTratamento && (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+                <div className="form-group" style={{ marginBottom: 0 }}>
+                  <label className="form-label">Descrição do Tratamento</label>
+                  <textarea className="textarea" value={form.tratamentoDescricao} onChange={e => setForm({...form, tratamentoDescricao: e.target.value})} placeholder="Doença de base, quadro atual..." style={{ minHeight: 50 }} />
+                </div>
+                <MedicamentoList medicamentos={form.medicamentosEmUso} onChange={m => setForm({...form, medicamentosEmUso: m})} />
+              </div>
+            )}
+          </div>
+
           <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
             <button type="button" className="btn btn-ghost" onClick={() => { setForm(emptyForm); setTab('lista'); }}>
               Cancelar
@@ -391,6 +419,23 @@ export default function CadastroIndigena({ showToast }: Props) {
                       <div style={{ fontWeight: 500 }}>Comorbidades</div>
                       <div style={{ marginTop: 2 }}>{detalhe.comorbidades.join(', ')}</div>
                     </div>
+                  </div>
+                )}
+                {detalhe.emTratamento && (
+                  <div style={{ background: '#FAFAF5', padding: '12px', borderRadius: 7, border: '0.5px solid #EAEAE0' }}>
+                    <div style={{ fontWeight: 500, fontSize: 12, color: '#1A1916', marginBottom: 4 }}>Em Tratamento</div>
+                    {detalhe.tratamentoDescricao && <div style={{ fontSize: 11, color: '#555550', marginBottom: 8 }}>{detalhe.tratamentoDescricao}</div>}
+                    {detalhe.medicamentosEmUso && detalhe.medicamentosEmUso.length > 0 && (
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: 4, marginTop: 8 }}>
+                        <div style={{ fontSize: 10, fontWeight: 600, color: '#888880', textTransform: 'uppercase' }}>Medicamentos:</div>
+                        {detalhe.medicamentosEmUso.map(m => (
+                          <div key={m.id} style={{ fontSize: 11, display: 'flex', gap: 6 }}>
+                            <span style={{ fontWeight: 500 }}>• {m.nome}</span>
+                            <span style={{ color: '#888880' }}>({m.dosagem} {m.frequencia})</span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
