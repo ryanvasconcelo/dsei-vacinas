@@ -2,7 +2,7 @@ import { useState } from 'react';
 import type { Indigena } from '../data/mockData';
 import { indigenas, polosBase, aldeias, etnias } from '../data/mockData';
 import { UserPlus, Search, Eye, X } from 'lucide-react';
-import { formatNomeComMae } from '../utils/formatters';
+import { formatNomeComMae, formatDateBR } from '../utils/formatters';
 
 import TagInput from '../components/TagInput';
 
@@ -329,7 +329,7 @@ export default function CadastroIndigena({ showToast }: Props) {
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px 16px', fontSize: 12 }}>
               {[
-                ['Data de Nascimento', detalhe.dataNascimento],
+                ['Data de Nascimento', formatDateBR(detalhe.dataNascimento)],
                 ['Sexo', detalhe.sexo === 'M' ? 'Masculino' : 'Feminino'],
                 ['Etnia', detalhe.etnia],
                 ['CPF', detalhe.cpf ?? '—'],

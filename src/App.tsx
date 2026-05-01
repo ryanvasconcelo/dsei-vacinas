@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { BrowserRouter, Routes, Route, NavLink, Navigate } from 'react-router-dom';
 import {
   LayoutDashboard, Users, Syringe, FileText, CalendarDays,
-  Package, ChevronRight, LogOut, Activity,
+  Package, LogOut,
 } from 'lucide-react';
 
 import Dashboard from './pages/Dashboard';

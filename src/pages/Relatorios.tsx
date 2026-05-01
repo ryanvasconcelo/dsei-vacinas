@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import { indigenas, dosesAplicadas, coberturaData, polosBase, pendenciasVacinais, vacinas } from '../data/mockData';
 import { Download, Filter } from 'lucide-react';
-import { formatNomeComMae } from '../utils/formatters';
+import { formatNomeComMae, formatDateBR } from '../utils/formatters';
 
 export default function Relatorios() {
   const [tab, setTab] = useState<'cobertura' | 'doses' | 'pendencias'>('cobertura');
@@ -199,7 +199,7 @@ export default function Relatorios() {
                       <td style={{ fontWeight: 500 }}>{polo.nome}</td>
                       <td style={{ fontFamily: "'DM Mono', monospace", fontWeight: 500 }}>{row.doses}</td>
                       <td style={{ fontFamily: "'DM Mono', monospace" }}>{indigenasUnicos}</td>
-                      <td className="mono">{ultima?.dataAplicacao ?? '—'}</td>
+                      <td className="mono">{ultima ? formatDateBR(ultima.dataAplicacao) : '—'}</td>
                     </tr>
                   );
                 })}

@@ -1,4 +1,4 @@
-import { AlertTriangle, Package } from 'lucide-react';
+import { AlertTriangle } from 'lucide-react';
 
 const estoque = [
   { id: 'E001', vacina: 'BCG', sigla: 'BCG', lote: 'BCG240012', fabricante: 'Fund. Ataulpho de Paiva', poloBase: 'Polo Base Alto Solimões', validade: '2025-06-30', quantidade: 48, minimo: 20 },

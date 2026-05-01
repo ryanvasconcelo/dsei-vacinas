@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import type { DoseAplicada } from '../data/mockData';
 import { indigenas, vacinas, vacinadores, dosesAplicadas } from '../data/mockData';
-import { Syringe, Search, AlertTriangle } from 'lucide-react';
+import { Syringe, Search, AlertTriangle, AlertCircle } from 'lucide-react';
+import { isVacinaForaCalendario } from '../utils/vacinas';
+import { formatDateBR } from '../utils/formatters';
 
 type Props = { showToast: (msg: string, type?: 'success' | 'error' | 'default') => void };
 
@@ -22,6 +24,8 @@ export default function RegistrarVacina({ showToast }: Props) {
   const [form, setForm] = useState(emptyForm);
   const [doses, setDoses] = useState<DoseAplicada[]>(dosesAplicadas);
   const [tab, setTab] = useState<'registrar' | 'historico'>('registrar');
+  const [showJustificativa, setShowJustificativa] = useState(false);
+  const [justificativa, setJustificativa] = useState('');
 
   const indigenaSelecionado = indigenas.find(i => i.id === form.indigenaId);
   const vacinaSelecionada = vacinas.find(v => v.id === form.vacinaId);
@@ -41,6 +45,18 @@ export default function RegistrarVacina({ showToast }: Props) {
       showToast('Preencha os campos obrigatórios.', 'error');
       return;
     }
+    const isFora = indigenaSelecionado && vacinaSelecionada ? isVacinaForaCalendario(indigenaSelecionado.dataNascimento, vacinaSelecionada.faixaEtaria, form.dataAplicacao) : false;
+
+    if (isFora && !showJustificativa) {
+      setShowJustificativa(true);
+      return;
+    }
+
+    if (showJustificativa && justificativa.length < 20) {
+      showToast('Justificativa deve ter pelo menos 20 caracteres.', 'error');
+      return;
+    }
+
     const nova: DoseAplicada = {
       id: `DOSE${String(Date.now()).slice(-5)}`,
       indigenaId: form.indigenaId,
@@ -56,11 +72,13 @@ export default function RegistrarVacina({ showToast }: Props) {
       localAplicacao: form.localAplicacao,
       vacinador: form.vacinador,
       observacoes: form.observacoes,
-      justificativaForaCalendario: null,
+      justificativaForaCalendario: showJustificativa ? justificativa : null,
     };
     setDoses(prev => [nova, ...prev]);
     setForm(emptyForm);
     setBusca('');
+    setShowJustificativa(false);
+    setJustificativa('');
     showToast(`Dose de ${nova.vacinaNome} registrada com sucesso!`, 'success');
   };
 
@@ -315,7 +333,7 @@ export default function RegistrarVacina({ showToast }: Props) {
                       </span>
                     </td>
                     <td style={{ fontSize: 11, color: '#888880' }}>{d.numeroDose}</td>
-                    <td className="mono">{d.dataAplicacao}</td>
+                    <td className="mono">{formatDateBR(d.dataAplicacao)}</td>
                     <td className="mono">{d.lote}</td>
                     <td style={{ fontSize: 11, color: '#888880' }}>{d.vacinador}</td>
                     <td style={{ fontSize: 11, color: '#888880' }}>{d.localAplicacao}</td>
@@ -324,6 +342,53 @@ export default function RegistrarVacina({ showToast }: Props) {
               })}
             </tbody>
           </table>
+        </div>
+      )}
+
+      {/* MODAL JUSTIFICATIVA */}
+      {showJustificativa && (
+        <div className="modal-overlay" onClick={() => setShowJustificativa(false)}>
+          <div className="modal" onClick={e => e.stopPropagation()} style={{ maxWidth: 460 }}>
+            <div className="modal-header">
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <AlertCircle size={18} color="#E24B4A" />
+                <div className="modal-title">Vacinação Fora do Calendário</div>
+              </div>
+              <button className="modal-close" onClick={() => setShowJustificativa(false)}>×</button>
+            </div>
+            <div style={{ fontSize: 13, color: '#444440', marginBottom: '1rem', lineHeight: 1.5 }}>
+              A vacina <strong>{vacinaSelecionada?.nome}</strong> possui faixa etária recomendada de <strong>{vacinaSelecionada?.faixaEtaria}</strong>. O paciente possui idade fora desta faixa.
+              <br /><br />
+              Por favor, informe a justificativa técnica para a aplicação (mín. 20 caracteres).
+            </div>
+            
+            <div style={{ display: 'flex', gap: 6, marginBottom: '1rem', flexWrap: 'wrap' }}>
+              {['Campanha emergencial', 'Atraso justificado pelo genitor', 'Área de difícil acesso/isolada'].map(btn => (
+                <button key={btn} type="button" className="btn btn-ghost btn-sm"
+                  style={{ background: '#F0EFE8', fontSize: 11 }}
+                  onClick={() => setJustificativa(btn + ' - ')}
+                >
+                  {btn}
+                </button>
+              ))}
+            </div>
+
+            <textarea
+              className="textarea"
+              style={{ minHeight: 80, marginBottom: '1rem' }}
+              placeholder="Digite a justificativa detalhada..."
+              value={justificativa}
+              onChange={e => setJustificativa(e.target.value)}
+              maxLength={500}
+            />
+
+            <div className="modal-footer" style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
+              <button className="btn btn-ghost btn-sm" onClick={() => setShowJustificativa(false)}>Cancelar</button>
+              <button className="btn btn-primary btn-sm" onClick={handleSalvar} disabled={justificativa.length < 20}>
+                Confirmar Aplicação
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>
