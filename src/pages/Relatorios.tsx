@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import { indigenas, dosesAplicadas, coberturaData, polosBase, pendenciasVacinais, vacinas } from '../data/mockData';
 import { Download, Filter } from 'lucide-react';
+import { formatNomeComMae } from '../utils/formatters';
 
 export default function Relatorios() {
   const [tab, setTab] = useState<'cobertura' | 'doses' | 'pendencias'>('cobertura');
@@ -25,6 +26,26 @@ export default function Relatorios() {
     }).length;
     return { polo: polo.nome.replace('Polo Base ', ''), doses: count };
   });
+
+  const handleExportarPendencias = () => {
+    const headers = ['Nome', 'Mãe', 'Pai', 'CNS', 'Polo Base', 'Aldeia', 'Vacina Pendente', 'Idade', 'Atraso (dias)'];
+    const rows = pendenciasFiltradas.map(p => {
+      const ind = indigenas.find(i => i.id === p.indigenaId);
+      return [
+        `"${p.nome}"`, `"${ind?.nomeMae ?? ''}"`, `"${ind?.nomePai ?? ''}"`,
+        `"${ind?.cns ?? ''}"`, `"${p.poloBase}"`, `"${p.aldeia}"`,
+        `"${p.vacina}"`, `"${p.idade}"`, p.diasAtraso
+      ].join(',');
+    });
+    const csvContent = "data:text/csv;charset=utf-8," + [headers.join(','), ...rows].join('\n');
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", "pendencias_vacinais.csv");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
   return (
     <div>
@@ -210,7 +231,7 @@ export default function Relatorios() {
               <button className="btn btn-ghost btn-sm" onClick={() => { setFiltroPolo(''); setFiltroVacina(''); }}>
                 Limpar
               </button>
-              <button className="btn btn-secondary btn-sm">
+              <button className="btn btn-secondary btn-sm" onClick={handleExportarPendencias}>
                 <Download size={12} /> Exportar
               </button>
             </div>
@@ -240,8 +261,8 @@ export default function Relatorios() {
                 ) : pendenciasFiltradas.map(p => {
                   const ind = indigenas.find(i => i.id === p.indigenaId);
                   return (
-                    <tr key={p.id}>
-                      <td style={{ fontWeight: 500 }}>{p.nome}</td>
+                    <tr key={p.id} title={`Mãe: ${ind?.nomeMae}${ind?.nomePai ? ` | Pai: ${ind.nomePai}` : ''}`}>
+                      <td style={{ fontWeight: 500 }}>{formatNomeComMae(p.nome, ind?.nomeMae ?? '')}</td>
                       <td className="mono">{ind?.cns ?? '—'}</td>
                       <td style={{ fontSize: 11, color: '#888880' }}>{p.poloBase}</td>
                       <td style={{ fontSize: 11, color: '#888880' }}>{p.aldeia}</td>

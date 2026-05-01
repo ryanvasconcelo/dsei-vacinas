@@ -2,6 +2,7 @@ import { useState } from 'react';
 import type { Indigena } from '../data/mockData';
 import { indigenas, polosBase, aldeias, etnias } from '../data/mockData';
 import { UserPlus, Search, Eye, X, ChevronRight } from 'lucide-react';
+import { formatNomeComMae } from '../utils/formatters';
 
 type Props = { showToast: (msg: string, type?: 'success' | 'error' | 'default') => void };
 
@@ -144,9 +145,9 @@ export default function CadastroIndigena({ showToast }: Props) {
                   })();
 
                   return (
-                    <tr key={ind.id}>
+                    <tr key={ind.id} title={`Mãe: ${ind.nomeMae}${ind.nomePai ? ` | Pai: ${ind.nomePai}` : ''}`}>
                       <td>
-                        <div style={{ fontWeight: 500 }}>{ind.nome}</div>
+                        <div style={{ fontWeight: 500 }}>{formatNomeComMae(ind.nome, ind.nomeMae)}</div>
                         <div style={{ fontSize: 10, color: '#888880', marginTop: 1 }}>
                           {ind.sexo === 'M' ? 'Masculino' : 'Feminino'}
                         </div>

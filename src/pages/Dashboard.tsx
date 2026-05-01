@@ -2,6 +2,7 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 import { Users, Syringe, TrendingUp, AlertCircle, ChevronRight } from 'lucide-react';
 import { indigenas, dosesAplicadas, coberturaData, dosesPorFaixaEtaria, pendenciasVacinais } from '../data/mockData';
 import { useNavigate } from 'react-router-dom';
+import { formatNomeComMae } from '../utils/formatters';
 
 const totalIndigenas = indigenas.length;
 const dosesNoMes = dosesAplicadas.filter(d => {
@@ -183,9 +184,13 @@ export default function Dashboard() {
               </tr>
             </thead>
             <tbody>
-              {pendenciasVacinais.map(p => (
-                <tr key={p.id}>
-                  <td style={{ fontWeight: 500 }}>{p.nome}</td>
+              {pendenciasVacinais.map(p => {
+                const ind = indigenas.find(i => i.id === p.indigenaId);
+                const nomeExibicao = ind ? formatNomeComMae(p.nome, ind.nomeMae) : p.nome;
+                const tooltipText = ind ? `Mãe: ${ind.nomeMae}${ind.nomePai ? ` | Pai: ${ind.nomePai}` : ''}` : '';
+                return (
+                <tr key={p.id} title={tooltipText}>
+                  <td style={{ fontWeight: 500 }}>{nomeExibicao}</td>
                   <td style={{ color: '#888880', fontSize: 11 }}>{p.poloBase}</td>
                   <td style={{ color: '#888880', fontSize: 11 }}>{p.aldeia}</td>
                   <td>
@@ -214,7 +219,7 @@ export default function Dashboard() {
                     </button>
                   </td>
                 </tr>
-              ))}
+              )})}
             </tbody>
           </table>
         </div>
