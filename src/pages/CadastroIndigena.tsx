@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import type { Indigena } from '../data/mockData';
-import { indigenas, polosBase, aldeias, etnias } from '../data/mockData';
+import { indigenas } from '../data/mockData';
+import { db } from '../services/mockDatabase';
 import { UserPlus, Search, Eye, X } from 'lucide-react';
 import { formatNomeComMae, formatDateBR } from '../utils/formatters';
 
@@ -26,6 +27,10 @@ export default function CadastroIndigena({ showToast }: Props) {
   const [form, setForm] = useState(emptyForm);
   const [tab, setTab] = useState<'lista' | 'novo'>('lista');
   const [detalhe, setDetalhe] = useState<Indigena | null>(null);
+
+  const polosBase = db.polos.list();
+  const aldeias = db.aldeias.list();
+  const etnias = db.etnias.list();
 
   const aldeiasFiltradas = form.poloBaseId
     ? aldeias.filter(a => a.poloBaseId === form.poloBaseId)
