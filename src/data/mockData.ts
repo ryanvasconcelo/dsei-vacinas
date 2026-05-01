@@ -147,7 +147,7 @@ export type DoseAplicada = {
 
 export const dosesAplicadas: DoseAplicada[] = [
   {
-    id: 'DOSE001', indigenaId: 'IND001', vacinaId: 'V001',
+    id: 'DOSE001', indigenaId: 'IND001', vacinaId: 'bcg',
     vacinaNome: 'BCG', vacinaSigla: 'BCG', numeroDose: '1ª Dose',
     dataAplicacao: '2023-08-14', lote: 'BCG240012',
     fabricante: 'Fund. Ataulpho de Paiva', validadeLote: '2025-06-30',
@@ -155,7 +155,7 @@ export const dosesAplicadas: DoseAplicada[] = [
     vacinador: 'Enf. Carlos Alberto', observacoes: '', justificativaForaCalendario: null,
   },
   {
-    id: 'DOSE002', indigenaId: 'IND001', vacinaId: 'V002',
+    id: 'DOSE002', indigenaId: 'IND001', vacinaId: 'hepb',
     vacinaNome: 'Hepatite B', vacinaSigla: 'HepB', numeroDose: '1ª Dose',
     dataAplicacao: '2023-08-14', lote: 'HEPB2400X',
     fabricante: 'Bio-Manguinhos', validadeLote: '2025-12-31',
@@ -163,7 +163,7 @@ export const dosesAplicadas: DoseAplicada[] = [
     vacinador: 'Enf. Carlos Alberto', observacoes: '', justificativaForaCalendario: null,
   },
   {
-    id: 'DOSE003', indigenaId: 'IND002', vacinaId: 'V003',
+    id: 'DOSE003', indigenaId: 'IND002', vacinaId: 'penta',
     vacinaNome: 'Pentavalente', vacinaSigla: 'Penta', numeroDose: '1ª Dose',
     dataAplicacao: '2021-05-22', lote: 'PENTA210034',
     fabricante: 'Bio-Manguinhos', validadeLote: '2025-08-31',
@@ -171,7 +171,7 @@ export const dosesAplicadas: DoseAplicada[] = [
     vacinador: 'Enf. Maria Conceição', observacoes: '', justificativaForaCalendario: null,
   },
   {
-    id: 'DOSE004', indigenaId: 'IND003', vacinaId: 'V004',
+    id: 'DOSE004', indigenaId: 'IND003', vacinaId: 'vip',
     vacinaNome: 'VIP (Poliomielite Inativada)', vacinaSigla: 'VIP', numeroDose: '1ª Dose',
     dataAplicacao: '2020-01-10', lote: 'VIP190023',
     fabricante: 'Bio-Manguinhos', validadeLote: '2026-03-31',
@@ -179,7 +179,7 @@ export const dosesAplicadas: DoseAplicada[] = [
     vacinador: 'Enf. Rosa Lima', observacoes: '', justificativaForaCalendario: null,
   },
   {
-    id: 'DOSE005', indigenaId: 'IND005', vacinaId: 'V001',
+    id: 'DOSE005', indigenaId: 'IND005', vacinaId: 'bcg',
     vacinaNome: 'BCG', vacinaSigla: 'BCG', numeroDose: '1ª Dose',
     dataAplicacao: '2020-01-20', lote: 'BCG200015',
     fabricante: 'Fund. Ataulpho de Paiva', validadeLote: '2025-06-30',
@@ -187,7 +187,7 @@ export const dosesAplicadas: DoseAplicada[] = [
     vacinador: 'Tec. João Paulo', observacoes: '', justificativaForaCalendario: null,
   },
   {
-    id: 'DOSE006', indigenaId: 'IND007', vacinaId: 'V008',
+    id: 'DOSE006', indigenaId: 'IND007', vacinaId: 'fa',
     vacinaNome: 'Febre Amarela', vacinaSigla: 'FA', numeroDose: '1ª Dose',
     dataAplicacao: '2019-09-20', lote: 'FA190045',
     fabricante: 'Bio-Manguinhos', validadeLote: '2025-09-30',
@@ -195,7 +195,7 @@ export const dosesAplicadas: DoseAplicada[] = [
     vacinador: 'Enf. Maria Conceição', observacoes: 'Paciente sem reação adversa observada', justificativaForaCalendario: null,
   },
   {
-    id: 'DOSE007', indigenaId: 'IND009', vacinaId: 'V012',
+    id: 'DOSE007', indigenaId: 'IND009', vacinaId: 'hpv4',
     vacinaNome: 'HPV Quadrivalente', vacinaSigla: 'HPV4', numeroDose: '1ª Dose',
     dataAplicacao: '2024-03-15', lote: 'HPV240078',
     fabricante: 'MSD', validadeLote: '2026-06-30',
@@ -203,7 +203,7 @@ export const dosesAplicadas: DoseAplicada[] = [
     vacinador: 'Tec. Anaísa Ferreira', observacoes: '', justificativaForaCalendario: null,
   },
   {
-    id: 'DOSE008', indigenaId: 'IND010', vacinaId: 'V013',
+    id: 'DOSE008', indigenaId: 'IND010', vacinaId: 'dt',
     vacinaNome: 'dT (Dupla adulto)', vacinaSigla: 'dT', numeroDose: '1ª Dose',
     dataAplicacao: '2024-01-10', lote: 'DT240012',
     fabricante: 'Bio-Manguinhos', validadeLote: '2026-01-31',
