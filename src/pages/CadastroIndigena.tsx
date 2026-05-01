@@ -144,7 +144,6 @@ export default function CadastroIndigena({ showToast }: Props) {
       {/* ——— LISTA ——— */}
       {tab === 'lista' && (
         <div>
-        <div>
           <DataFilterPanel 
             filters={filters} 
             config={filterConfig} 
