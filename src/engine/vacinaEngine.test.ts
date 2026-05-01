@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { sugerirProximasDoses, validarAplicacao } from './vacinaEngine';
+import { sugerirProximasDoses, validarAplicacao, validarSimultaneidade } from './vacinaEngine';
 import { Indigena, DoseAplicada } from '../data/mockData';
 import { parseISO } from 'date-fns';
 
@@ -102,5 +102,24 @@ describe('vacinaEngine - validarAplicacao', () => {
     expect(resultado.valido).toBe(false);
     expect(resultado.severidade).toBe('BLOQUEIO');
     expect(resultado.motivo).toContain('Intervalo mínimo');
+  });
+});
+
+describe('vacinaEngine - validarSimultaneidade', () => {
+  it('deve bloquear simultaneidade de SCR e FA em crianças < 2 anos', () => {
+    const pacienteBebe = { dataNascimento: '2026-03-01' } as Indigena;
+    const hoje = parseISO('2026-12-01'); // 9 meses
+    
+    const resultado = validarSimultaneidade(pacienteBebe, 'scr', 'fa', hoje);
+    expect(resultado.permitido).toBe(false);
+    expect(resultado.intervaloMinimoSeNaoSimultaneo).toBe(30);
+  });
+
+  it('deve permitir simultaneidade se idade for >= 2 anos', () => {
+    const pacienteCriança = { dataNascimento: '2023-01-01' } as Indigena;
+    const hoje = parseISO('2026-01-01'); // 3 anos
+    
+    const resultado = validarSimultaneidade(pacienteCriança, 'scr', 'fa', hoje);
+    expect(resultado.permitido).toBe(true);
   });
 });

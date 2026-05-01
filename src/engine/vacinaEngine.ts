@@ -1,6 +1,6 @@
 import { Indigena, DoseAplicada } from '../data/mockData';
 import { SugestaoDose, RegraVacinacao, DoseRegra } from '../types/vacina';
-import { regrasVacinais } from '../data/regrasVacinais';
+import { regrasVacinais, regrasSimultaneidade } from '../data/regrasVacinais';
 import { differenceInDays, differenceInCalendarDays, addDays, parseISO, startOfDay } from 'date-fns';
 
 export function sugerirProximasDoses(
@@ -159,6 +159,32 @@ export function validarAplicacao(
   return { valido: true, motivo: null, severidade: 'OK', requerJustificativa: false };
 }
 
-export function validarSimultaneidade() {
-    // TODO: Implementar Task 5
+export function validarSimultaneidade(
+  paciente: Indigena,
+  vacinaIdA: string,
+  vacinaIdB: string,
+  hoje: Date
+): { permitido: boolean; intervaloMinimoSeNaoSimultaneo: number } {
+  const dataNasc = startOfDay(parseISO(paciente.dataNascimento));
+  const hojeLimpo = startOfDay(hoje);
+  const idadeEmDias = differenceInCalendarDays(hojeLimpo, dataNasc);
+
+  const regra = regrasSimultaneidade.find(r => 
+    (r.imunobiologicoIdA === vacinaIdA && r.imunobiologicoIdB === vacinaIdB) ||
+    (r.imunobiologicoIdA === vacinaIdB && r.imunobiologicoIdB === vacinaIdA)
+  );
+
+  if (!regra) {
+    return { permitido: true, intervaloMinimoSeNaoSimultaneo: 0 };
+  }
+
+  // Regra especial: SCR + FA em menores de 2 anos
+  if (regra.condicaoEspecial === 'Menores de 2 anos' && idadeEmDias >= 2 * 365) {
+    return { permitido: true, intervaloMinimoSeNaoSimultaneo: 0 };
+  }
+
+  return { 
+    permitido: regra.permitido, 
+    intervaloMinimoSeNaoSimultaneo: regra.intervaloMinimoSeNaoSimultaneo 
+  };
 }
