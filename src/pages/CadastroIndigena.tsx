@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import type { Indigena } from '../data/mockData';
-import { indigenas } from '../data/mockData';
+import { indigenas, dosesAplicadas } from '../data/mockData';
 import { db } from '../services/mockDatabase';
 import { UserPlus, Search, Eye, X } from 'lucide-react';
 import { formatNomeComMae, formatDateBR } from '../utils/formatters';
@@ -9,6 +9,7 @@ import { DataFilterPanel, type FilterConfig } from '../components/ui/DataFilterP
 
 import TagInput from '../components/TagInput';
 import MedicamentoList from '../components/MedicamentoList';
+import SugestoesVacinais from '../components/paciente/SugestoesVacinais';
 
 type Props = { showToast: (msg: string, type?: 'success' | 'error' | 'default') => void };
 
@@ -482,6 +483,14 @@ export default function CadastroIndigena({ showToast }: Props) {
                 )}
               </div>
             )}
+
+            <div style={{ marginTop: '1.25rem' }}>
+              <SugestoesVacinais 
+                paciente={detalhe} 
+                dosesJaAplicadas={dosesAplicadas.filter(d => d.indigenaId === detalhe.id)} 
+              />
+            </div>
+
             <div className="modal-footer" style={{ marginTop: '1.25rem' }}>
               <button className="btn btn-ghost btn-sm" onClick={() => setDetalhe(null)}>Fechar</button>
             </div>

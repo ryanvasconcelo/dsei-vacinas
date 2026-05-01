@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import type { DoseAplicada } from '../data/mockData';
 import { indigenas, vacinas, vacinadores, dosesAplicadas } from '../data/mockData';
-import { Syringe, Search, AlertTriangle, AlertCircle } from 'lucide-react';
-import { isVacinaForaCalendario } from '../utils/vacinas';
+import { Syringe, Search, AlertTriangle, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { validarAplicacao } from '../engine/vacinaEngine';
 import { formatDateBR } from '../utils/formatters';
 import { useFilters } from '../hooks/useFilters';
 import { DataFilterPanel, type FilterConfig } from '../components/ui/DataFilterPanel';
+import { parseISO } from 'date-fns';
 
 type Props = { showToast: (msg: string, type?: 'success' | 'error' | 'default') => void };
 
@@ -37,6 +38,26 @@ export default function RegistrarVacina({ showToast }: Props) {
 
   const indigenaSelecionado = indigenas.find(i => i.id === form.indigenaId);
   const vacinaSelecionada = vacinas.find(v => v.id === form.vacinaId);
+
+  const mapDoseId = (d: string) => {
+    if (d === '1ª Dose') return 1;
+    if (d === '2ª Dose') return 2;
+    if (d === '3ª Dose') return 3;
+    if (d === 'Reforço 1') return 'REF1';
+    if (d === 'Reforço 2') return 'REF2';
+    if (d === 'Dose Única') return 1;
+    return d;
+  };
+
+  const validation = (indigenaSelecionado && form.vacinaId && form.numeroDose && form.dataAplicacao)
+    ? validarAplicacao(
+        indigenaSelecionado, 
+        form.vacinaId, 
+        mapDoseId(form.numeroDose), 
+        parseISO(form.dataAplicacao), 
+        doses.filter(d => d.indigenaId === form.indigenaId)
+      )
+    : null;
 
   const indigenasFiltrados = busca.length >= 2
     ? indigenas.filter(i =>
@@ -74,11 +95,32 @@ export default function RegistrarVacina({ showToast }: Props) {
       showToast('Preencha os campos obrigatórios.', 'error');
       return;
     }
-    const isFora = indigenaSelecionado && vacinaSelecionada ? isVacinaForaCalendario(indigenaSelecionado.dataNascimento, vacinaSelecionada.faixaEtaria, form.dataAplicacao) : false;
 
-    if (isFora && !showJustificativa) {
-      setShowJustificativa(true);
-      return;
+    const mapDose = (d: string) => {
+      if (d === '1ª Dose') return 1;
+      if (d === '2ª Dose') return 2;
+      if (d === '3ª Dose') return 3;
+      if (d === 'Reforço 1') return 'REF1';
+      if (d === 'Reforço 2') return 'REF2';
+      if (d === 'Dose Única') return 1;
+      return d;
+    };
+
+    const validation = indigenaSelecionado 
+      ? validarAplicacao(
+          indigenaSelecionado, 
+          form.vacinaId, 
+          mapDose(form.numeroDose), 
+          parseISO(form.dataAplicacao), 
+          doses.filter(d => d.indigenaId === form.indigenaId)
+        )
+      : { valido: true, motivo: null, severidade: 'OK', requerJustificativa: false };
+
+    if (!validation.valido && !showJustificativa) {
+      if (validation.severidade === 'BLOQUEIO') {
+        setShowJustificativa(true);
+        return;
+      }
     }
 
     if (showJustificativa && justificativa.length < 20) {
@@ -275,6 +317,37 @@ export default function RegistrarVacina({ showToast }: Props) {
               ))}
             </div>
           </div>
+
+            </div>
+          </div>
+
+          {/* REAL-TIME VALIDATION FEEDBACK */}
+          {validation && (
+            <div className={`card mb-4 border-l-4 ${
+              validation.valido ? 'border-green-500 bg-green-50' : 
+              validation.severidade === 'BLOQUEIO' ? 'border-red-500 bg-red-50' : 'border-yellow-500 bg-yellow-50'
+            }`} style={{ marginBottom: '1rem' }}>
+              <div className="flex items-center gap-3 p-1">
+                {validation.valido ? (
+                  <CheckCircle2 className="w-5 h-5 text-green-600" />
+                ) : (
+                  <AlertTriangle className={`w-5 h-5 ${validation.severidade === 'BLOQUEIO' ? 'text-red-600' : 'text-yellow-600'}`} />
+                )}
+                <div>
+                  <div className={`font-bold text-sm ${
+                    validation.valido ? 'text-green-800' : 
+                    validation.severidade === 'BLOQUEIO' ? 'text-red-800' : 'text-yellow-800'
+                  }`}>
+                    {validation.valido ? 'Aplicação em Conformidade' : 
+                     validation.severidade === 'BLOQUEIO' ? 'Inconformidade Normativa' : 'Alerta de Saúde'}
+                  </div>
+                  <div className="text-xs text-slate-600 mt-0.5">
+                    {validation.valido ? 'Esta dose respeita as janelas de idade e intervalos da IN 2026.' : validation.motivo}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* DADOS DO LOTE */}
           <div className="card" style={{ marginBottom: '1rem' }}>

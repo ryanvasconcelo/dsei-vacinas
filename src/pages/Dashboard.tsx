@@ -1,8 +1,11 @@
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import { Users, Syringe, TrendingUp, AlertCircle, ChevronRight } from 'lucide-react';
-import { indigenas, dosesAplicadas, coberturaData, dosesPorFaixaEtaria, pendenciasVacinais } from '../data/mockData';
+import { indigenas, dosesAplicadas, coberturaData, dosesPorFaixaEtaria } from '../data/mockData';
 import { useNavigate } from 'react-router-dom';
 import { formatNomeComMae } from '../utils/formatters';
+import { sugerirProximasDoses } from '../engine/vacinaEngine';
+import { useMemo } from 'react';
+import { differenceInDays, parseISO } from 'date-fns';
 
 const totalIndigenas = indigenas.length;
 const dosesNoMes = dosesAplicadas.filter(d => {
@@ -11,7 +14,6 @@ const dosesNoMes = dosesAplicadas.filter(d => {
   return data.getMonth() === now.getMonth() && data.getFullYear() === now.getFullYear();
 }).length;
 const coberturaMedia = Math.round(coberturaData.reduce((s, d) => s + d.cobertura, 0) / coberturaData.length);
-const pendencias = pendenciasVacinais.length;
 
 function MetricCard({ label, value, delta, icon, negative }: {
   label: string; value: string | number;
@@ -50,6 +52,29 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 
 export default function Dashboard() {
   const navigate = useNavigate();
+  const hoje = useMemo(() => new Date(), []);
+
+  const todasPendencias = useMemo(() => {
+    return indigenas.flatMap(ind => {
+      const dosesInd = dosesAplicadas.filter(d => d.indigenaId === ind.id);
+      const sugestoes = sugerirProximasDoses(ind, hoje, dosesInd);
+      return sugestoes
+        .filter(s => s.status === 'ATRASADA')
+        .map(s => ({
+          id: `${ind.id}-${s.vacinaId}`,
+          indigenaId: ind.id,
+          nome: ind.nome,
+          nomeMae: ind.nomeMae,
+          poloBase: ind.poloBase,
+          aldeia: ind.aldeia,
+          vacina: `${s.vacinaId.toUpperCase()} (${s.numeroDose})`,
+          dataNascimento: ind.dataNascimento,
+          diasAtraso: differenceInDays(hoje, s.dataSugerida)
+        }));
+    }).sort((a, b) => b.diasAtraso - a.diasAtraso);
+  }, [hoje]);
+
+  const pendenciasCount = todasPendencias.length;
 
   return (
     <div>
@@ -155,8 +180,8 @@ export default function Dashboard() {
       <div className="card">
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.9rem' }}>
           <div>
-            <div className="card-title">Pendências Vacinais</div>
-            <div className="card-sub">Indígenas com doses em atraso — prioridade de atendimento</div>
+            <div className="card-title">Pendências Vacinais (Motor de Regras 2026)</div>
+            <div className="card-sub">Baseado na IN 2026 · Doses em atraso</div>
           </div>
           <button className="btn btn-ghost btn-sm" onClick={() => {}}>
             Ver todos <ChevronRight size={12} />
@@ -166,7 +191,7 @@ export default function Dashboard() {
         <div className="alert alert-warn" style={{ marginBottom: '0.9rem' }}>
           <AlertCircle size={14} style={{ flexShrink: 0, marginTop: 1 }} />
           <div>
-            <strong>{pendencias} indígenas</strong> com esquema vacinal incompleto ou em atraso. Priorizar crianças menores de 1 ano.
+            <strong>{pendenciasCount} indígenas</strong> com esquema vacinal incompleto ou em atraso.
           </div>
         </div>
 
@@ -178,20 +203,16 @@ export default function Dashboard() {
                 <th>Polo Base</th>
                 <th>Aldeia</th>
                 <th>Vacina Pendente</th>
-                <th>Idade</th>
                 <th>Atraso</th>
                 <th></th>
               </tr>
             </thead>
             <tbody>
-              {pendenciasVacinais.map(p => {
-                const ind = indigenas.find(i => i.id === p.indigenaId);
-                const nomeExibicao = ind ? formatNomeComMae(p.nome, ind.nomeMae) : p.nome;
-                const tooltipText = ind ? `Mãe: ${ind.nomeMae}${ind.nomePai ? ` | Pai: ${ind.nomePai}` : ''}` : '';
+              {todasPendencias.slice(0, 8).map(p => {
                 return (
-                <tr key={p.id} title={tooltipText}>
-                  <td style={{ fontWeight: 500 }}>{nomeExibicao}</td>
-                  <td style={{ color: '#888880', fontSize: 11 }}>{p.poloBase}</td>
+                <tr key={p.id}>
+                  <td style={{ fontWeight: 500 }}>{formatNomeComMae(p.nome, p.nomeMae)}</td>
+                  <td style={{ color: '#888880', fontSize: 11 }}>{p.poloBase.replace('Polo Base ', '')}</td>
                   <td style={{ color: '#888880', fontSize: 11 }}>{p.aldeia}</td>
                   <td>
                     <span className="badge badge-warning">
@@ -199,7 +220,6 @@ export default function Dashboard() {
                       {p.vacina}
                     </span>
                   </td>
-                  <td style={{ color: '#888880', fontSize: 11 }}>{p.idade}</td>
                   <td>
                     <span style={{
                       fontFamily: "'DM Mono', monospace",
@@ -213,7 +233,7 @@ export default function Dashboard() {
                   <td style={{ textAlign: 'right' }}>
                     <button
                       className="btn btn-ghost btn-sm"
-                      onClick={() => {}}
+                      onClick={() => navigate('/vacinacao')}
                     >
                       Registrar
                     </button>

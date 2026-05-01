@@ -43,19 +43,19 @@ export const vacinadores = [
 ];
 
 export const vacinas = [
-  { id: 'V001', nome: 'BCG', sigla: 'BCG', doses: 1, faixaEtaria: 'Ao nascer', fabricante: 'Fund. Ataulpho de Paiva' },
-  { id: 'V002', nome: 'Hepatite B', sigla: 'HepB', doses: 3, faixaEtaria: 'Ao nascer', fabricante: 'Bio-Manguinhos' },
-  { id: 'V003', nome: 'Pentavalente', sigla: 'Penta', doses: 3, faixaEtaria: '2, 4 e 6 meses', fabricante: 'Bio-Manguinhos' },
-  { id: 'V004', nome: 'VIP (Poliomielite Inativada)', sigla: 'VIP', doses: 3, faixaEtaria: '2, 4 e 6 meses', fabricante: 'Bio-Manguinhos' },
-  { id: 'V005', nome: 'Pneumocócica 10V', sigla: 'PCV10', doses: 3, faixaEtaria: '2, 4 meses + reforço', fabricante: 'GSK' },
-  { id: 'V006', nome: 'Meningocócica C', sigla: 'MnC', doses: 2, faixaEtaria: '3 e 5 meses', fabricante: 'Novartis' },
-  { id: 'V007', nome: 'Rotavírus', sigla: 'RV1', doses: 2, faixaEtaria: '2 e 4 meses', fabricante: 'GSK' },
-  { id: 'V008', nome: 'Febre Amarela', sigla: 'FA', doses: 1, faixaEtaria: '9 meses', fabricante: 'Bio-Manguinhos' },
-  { id: 'V009', nome: 'Tríplice Viral (SCR)', sigla: 'SCR', doses: 2, faixaEtaria: '12 e 15 meses', fabricante: 'Bio-Manguinhos' },
-  { id: 'V010', nome: 'Varicela', sigla: 'VCZ', doses: 1, faixaEtaria: '15 meses', fabricante: 'GSK' },
-  { id: 'V011', nome: 'Hepatite A', sigla: 'HepA', doses: 1, faixaEtaria: '15 meses', fabricante: 'GSK' },
-  { id: 'V012', nome: 'HPV Quadrivalente', sigla: 'HPV4', doses: 2, faixaEtaria: '9-14 anos', fabricante: 'MSD' },
-  { id: 'V013', nome: 'dT (Dupla adulto)', sigla: 'dT', doses: 3, faixaEtaria: 'A partir de 7 anos', fabricante: 'Bio-Manguinhos' },
+  { id: 'bcg', nome: 'BCG', sigla: 'BCG', doses: 1, faixaEtaria: 'Ao nascer', fabricante: 'Fund. Ataulpho de Paiva' },
+  { id: 'hepb', nome: 'Hepatite B', sigla: 'HepB', doses: 3, faixaEtaria: 'Ao nascer', fabricante: 'Bio-Manguinhos' },
+  { id: 'penta', nome: 'Pentavalente', sigla: 'Penta', doses: 3, faixaEtaria: '2, 4 e 6 meses', fabricante: 'Bio-Manguinhos' },
+  { id: 'vip', nome: 'VIP (Poliomielite Inativada)', sigla: 'VIP', doses: 3, faixaEtaria: '2, 4 e 6 meses', fabricante: 'Bio-Manguinhos' },
+  { id: 'pcv10', nome: 'Pneumocócica 10V', sigla: 'PCV10', doses: 3, faixaEtaria: '2, 4 meses + reforço', fabricante: 'GSK' },
+  { id: 'mnc', nome: 'Meningocócica C', sigla: 'MnC', doses: 2, faixaEtaria: '3 e 5 meses', fabricante: 'Novartis' },
+  { id: 'rv1', nome: 'Rotavírus', sigla: 'RV1', doses: 2, faixaEtaria: '2 e 4 meses', fabricante: 'GSK' },
+  { id: 'fa', nome: 'Febre Amarela', sigla: 'FA', doses: 1, faixaEtaria: '9 meses', fabricante: 'Bio-Manguinhos' },
+  { id: 'scr', nome: 'Tríplice Viral (SCR)', sigla: 'SCR', doses: 2, faixaEtaria: '12 e 15 meses', fabricante: 'Bio-Manguinhos' },
+  { id: 'vcz', nome: 'Varicela', sigla: 'VCZ', doses: 1, faixaEtaria: '15 meses', fabricante: 'GSK' },
+  { id: 'hepa', nome: 'Hepatite A', sigla: 'HepA', doses: 1, faixaEtaria: '15 meses', fabricante: 'GSK' },
+  { id: 'hpv4', nome: 'HPV Quadrivalente', sigla: 'HPV4', doses: 2, faixaEtaria: '9-14 anos', fabricante: 'MSD' },
+  { id: 'dt', nome: 'dT (Dupla adulto)', sigla: 'dT', doses: 3, faixaEtaria: 'A partir de 7 anos', fabricante: 'Bio-Manguinhos' },
 ];
 
 export type Medicamento = {
@@ -147,7 +147,7 @@ export type DoseAplicada = {
 
 export const dosesAplicadas: DoseAplicada[] = [
   {
-    id: 'DOSE001', indigenaId: 'IND001', vacinaId: 'V001',
+    id: 'DOSE001', indigenaId: 'IND001', vacinaId: 'bcg',
     vacinaNome: 'BCG', vacinaSigla: 'BCG', numeroDose: '1ª Dose',
     dataAplicacao: '2023-08-14', lote: 'BCG240012',
     fabricante: 'Fund. Ataulpho de Paiva', validadeLote: '2025-06-30',
@@ -155,7 +155,7 @@ export const dosesAplicadas: DoseAplicada[] = [
     vacinador: 'Enf. Carlos Alberto', observacoes: '', justificativaForaCalendario: null,
   },
   {
-    id: 'DOSE002', indigenaId: 'IND001', vacinaId: 'V002',
+    id: 'DOSE002', indigenaId: 'IND001', vacinaId: 'hepb',
     vacinaNome: 'Hepatite B', vacinaSigla: 'HepB', numeroDose: '1ª Dose',
     dataAplicacao: '2023-08-14', lote: 'HEPB2400X',
     fabricante: 'Bio-Manguinhos', validadeLote: '2025-12-31',
@@ -163,7 +163,7 @@ export const dosesAplicadas: DoseAplicada[] = [
     vacinador: 'Enf. Carlos Alberto', observacoes: '', justificativaForaCalendario: null,
   },
   {
-    id: 'DOSE003', indigenaId: 'IND002', vacinaId: 'V003',
+    id: 'DOSE003', indigenaId: 'IND002', vacinaId: 'penta',
     vacinaNome: 'Pentavalente', vacinaSigla: 'Penta', numeroDose: '1ª Dose',
     dataAplicacao: '2021-05-22', lote: 'PENTA210034',
     fabricante: 'Bio-Manguinhos', validadeLote: '2025-08-31',
@@ -171,7 +171,7 @@ export const dosesAplicadas: DoseAplicada[] = [
     vacinador: 'Enf. Maria Conceição', observacoes: '', justificativaForaCalendario: null,
   },
   {
-    id: 'DOSE004', indigenaId: 'IND003', vacinaId: 'V004',
+    id: 'DOSE004', indigenaId: 'IND003', vacinaId: 'vip',
     vacinaNome: 'VIP (Poliomielite Inativada)', vacinaSigla: 'VIP', numeroDose: '1ª Dose',
     dataAplicacao: '2020-01-10', lote: 'VIP190023',
     fabricante: 'Bio-Manguinhos', validadeLote: '2026-03-31',
@@ -179,7 +179,7 @@ export const dosesAplicadas: DoseAplicada[] = [
     vacinador: 'Enf. Rosa Lima', observacoes: '', justificativaForaCalendario: null,
   },
   {
-    id: 'DOSE005', indigenaId: 'IND005', vacinaId: 'V001',
+    id: 'DOSE005', indigenaId: 'IND005', vacinaId: 'bcg',
     vacinaNome: 'BCG', vacinaSigla: 'BCG', numeroDose: '1ª Dose',
     dataAplicacao: '2020-01-20', lote: 'BCG200015',
     fabricante: 'Fund. Ataulpho de Paiva', validadeLote: '2025-06-30',
@@ -187,7 +187,7 @@ export const dosesAplicadas: DoseAplicada[] = [
     vacinador: 'Tec. João Paulo', observacoes: '', justificativaForaCalendario: null,
   },
   {
-    id: 'DOSE006', indigenaId: 'IND007', vacinaId: 'V008',
+    id: 'DOSE006', indigenaId: 'IND007', vacinaId: 'fa',
     vacinaNome: 'Febre Amarela', vacinaSigla: 'FA', numeroDose: '1ª Dose',
     dataAplicacao: '2019-09-20', lote: 'FA190045',
     fabricante: 'Bio-Manguinhos', validadeLote: '2025-09-30',
@@ -195,7 +195,7 @@ export const dosesAplicadas: DoseAplicada[] = [
     vacinador: 'Enf. Maria Conceição', observacoes: 'Paciente sem reação adversa observada', justificativaForaCalendario: null,
   },
   {
-    id: 'DOSE007', indigenaId: 'IND009', vacinaId: 'V012',
+    id: 'DOSE007', indigenaId: 'IND009', vacinaId: 'hpv4',
     vacinaNome: 'HPV Quadrivalente', vacinaSigla: 'HPV4', numeroDose: '1ª Dose',
     dataAplicacao: '2024-03-15', lote: 'HPV240078',
     fabricante: 'MSD', validadeLote: '2026-06-30',
@@ -203,7 +203,7 @@ export const dosesAplicadas: DoseAplicada[] = [
     vacinador: 'Tec. Anaísa Ferreira', observacoes: '', justificativaForaCalendario: null,
   },
   {
-    id: 'DOSE008', indigenaId: 'IND010', vacinaId: 'V013',
+    id: 'DOSE008', indigenaId: 'IND010', vacinaId: 'dt',
     vacinaNome: 'dT (Dupla adulto)', vacinaSigla: 'dT', numeroDose: '1ª Dose',
     dataAplicacao: '2024-01-10', lote: 'DT240012',
     fabricante: 'Bio-Manguinhos', validadeLote: '2026-01-31',
