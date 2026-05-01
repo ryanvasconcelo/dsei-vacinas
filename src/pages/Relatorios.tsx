@@ -99,7 +99,7 @@ export default function Relatorios() {
                 <XAxis type="number" domain={[0, 100]} tick={{ fontSize: 10, fill: '#888880' }} tickLine={false} axisLine={false}
                   tickFormatter={v => `${v}%`} />
                 <YAxis dataKey="polo" type="category" tick={{ fontSize: 10, fill: '#888880' }} tickLine={false} axisLine={false} width={100} />
-                <Tooltip formatter={(val: number) => [`${val}%`, '']} contentStyle={{ fontSize: 11, borderRadius: 7, border: '0.5px solid #DDDDD5' }} />
+                <Tooltip formatter={(val: any) => [`${val}%`, '']} contentStyle={{ fontSize: 11, borderRadius: 7, border: '0.5px solid #DDDDD5' }} />
                 <Bar dataKey="meta" fill="#EEEEE8" radius={[0, 3, 3, 0]} barSize={16} name="Meta (95%)" />
                 <Bar dataKey="cobertura" radius={[0, 3, 3, 0]} barSize={16} name="Cobertura">
                   {coberturaFiltrada.map((entry, i) => (

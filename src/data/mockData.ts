@@ -65,7 +65,9 @@ export type Indigena = {
   poloBase: string;
   etnia: string;
   acamado: boolean;
-  contraindicacao: string | null;
+  situacao: 'PRESENTE' | 'AUSENTE' | 'OBITO';
+  contraindicacoes: string[];
+  comorbidades: string[];
 };
 
 export const indigenas: Indigena[] = [
@@ -75,7 +77,7 @@ export const indigenas: Indigena[] = [
     nomeMae: 'Ana Maria Tikuna', nomePai: 'José Tikuna da Silva',
     aldeiaId: 'ALD001', aldeia: 'Aldeia Umariaçu I',
     poloBaseId: 'PB001', poloBase: 'Polo Base Alto Solimões',
-    etnia: 'Tikuna', acamado: false, contraindicacao: null,
+    etnia: 'Tikuna', acamado: false, situacao: 'PRESENTE', contraindicacoes: [], comorbidades: [],
   },
   {
     id: 'IND002', nome: 'Maria das Graças Kokama', cns: '234567890123456',
@@ -83,7 +85,7 @@ export const indigenas: Indigena[] = [
     nomeMae: 'Conceição Kokama', nomePai: null,
     aldeiaId: 'ALD001', aldeia: 'Aldeia Umariaçu I',
     poloBaseId: 'PB001', poloBase: 'Polo Base Alto Solimões',
-    etnia: 'Kokama', acamado: false, contraindicacao: null,
+    etnia: 'Kokama', acamado: false, situacao: 'PRESENTE', contraindicacoes: [], comorbidades: [],
   },
   {
     id: 'IND003', nome: 'Pedro Yanomami Ferreira', cns: '345678901234567',
@@ -91,7 +93,7 @@ export const indigenas: Indigena[] = [
     nomeMae: 'Rosa Yanomami', nomePai: 'Luis Yanomami Ferreira',
     aldeiaId: 'ALD011', aldeia: 'Aldeia Demini',
     poloBaseId: 'PB005', poloBase: 'Polo Base Rio Negro',
-    etnia: 'Yanomami', acamado: false, contraindicacao: null,
+    etnia: 'Yanomami', acamado: false, situacao: 'PRESENTE', contraindicacoes: [], comorbidades: [],
   },
   {
     id: 'IND004', nome: 'Antônia Baré Nascimento', cns: '456789012345678',
@@ -99,7 +101,7 @@ export const indigenas: Indigena[] = [
     nomeMae: 'Francisca Baré', nomePai: 'António Baré',
     aldeiaId: 'ALD012', aldeia: 'Aldeia Maturacá',
     poloBaseId: 'PB005', poloBase: 'Polo Base Rio Negro',
-    etnia: 'Baré', acamado: true, contraindicacao: 'Hipertensão controlada — verificar antes de aplicar',
+    etnia: 'Baré', acamado: true, situacao: 'PRESENTE', contraindicacoes: ['Hipertensão controlada — verificar antes de aplicar'], comorbidades: [],
   },
   {
     id: 'IND005', nome: 'João Kanamari de Souza', cns: '567890123456789',
@@ -107,7 +109,7 @@ export const indigenas: Indigena[] = [
     nomeMae: 'Luzia Kanamari', nomePai: 'Raimundo Kanamari',
     aldeiaId: 'ALD009', aldeia: 'Aldeia Ituí',
     poloBaseId: 'PB004', poloBase: 'Polo Base Vale do Javari',
-    etnia: 'Kanamari', acamado: false, contraindicacao: null,
+    etnia: 'Kanamari', acamado: false, situacao: 'PRESENTE', contraindicacoes: [], comorbidades: [],
   },
   {
     id: 'IND006', nome: 'Cláudia Paumari Lima', cns: '678901234567890',
@@ -115,7 +117,7 @@ export const indigenas: Indigena[] = [
     nomeMae: 'Irene Paumari Lima', nomePai: null,
     aldeiaId: 'ALD007', aldeia: 'Aldeia Pauini',
     poloBaseId: 'PB003', poloBase: 'Polo Base Purus',
-    etnia: 'Paumari', acamado: false, contraindicacao: null,
+    etnia: 'Paumari', acamado: false, situacao: 'PRESENTE', contraindicacoes: [], comorbidades: [],
   },
   {
     id: 'IND007', nome: 'Francisco Sateré Moraes', cns: '789012345678901',
@@ -123,7 +125,7 @@ export const indigenas: Indigena[] = [
     nomeMae: 'Benedita Sateré', nomePai: 'Manoel Sateré Moraes',
     aldeiaId: 'ALD004', aldeia: 'Aldeia Betel',
     poloBaseId: 'PB002', poloBase: 'Polo Base Médio Solimões',
-    etnia: 'Sateré-Mawé', acamado: false, contraindicacao: 'Alergia a ovo — contraindicação FA',
+    etnia: 'Sateré-Mawé', acamado: false, situacao: 'PRESENTE', contraindicacoes: ['Alergia a ovo — contraindicação FA'], comorbidades: [],
   },
   {
     id: 'IND008', nome: 'Raimunda Tikuna Costa', cns: '890123456789012',
@@ -131,7 +133,7 @@ export const indigenas: Indigena[] = [
     nomeMae: 'Tereza Tikuna Costa', nomePai: 'Carlos Tikuna Costa',
     aldeiaId: 'ALD002', aldeia: 'Aldeia Umariaçu II',
     poloBaseId: 'PB001', poloBase: 'Polo Base Alto Solimões',
-    etnia: 'Tikuna', acamado: false, contraindicacao: null,
+    etnia: 'Tikuna', acamado: false, situacao: 'PRESENTE', contraindicacoes: [], comorbidades: [],
   },
   {
     id: 'IND009', nome: 'Sebastião Matis Pereira', cns: '901234567890123',
@@ -139,7 +141,7 @@ export const indigenas: Indigena[] = [
     nomeMae: 'Iracema Matis', nomePai: 'Sebastião Matis Pai',
     aldeiaId: 'ALD010', aldeia: 'Aldeia Itacoaí',
     poloBaseId: 'PB004', poloBase: 'Polo Base Vale do Javari',
-    etnia: 'Matis', acamado: false, contraindicacao: null,
+    etnia: 'Matis', acamado: false, situacao: 'PRESENTE', contraindicacoes: [], comorbidades: [],
   },
   {
     id: 'IND010', nome: 'Elenice Deni Santos', cns: '012345678901234',
@@ -147,7 +149,7 @@ export const indigenas: Indigena[] = [
     nomeMae: 'Olinda Deni', nomePai: 'Olimpio Deni Santos',
     aldeiaId: 'ALD008', aldeia: 'Aldeia Tapauá',
     poloBaseId: 'PB003', poloBase: 'Polo Base Purus',
-    etnia: 'Deni', acamado: false, contraindicacao: null,
+    etnia: 'Deni', acamado: false, situacao: 'PRESENTE', contraindicacoes: [], comorbidades: [],
   },
   {
     id: 'IND011', nome: 'Naiara Yanomami Silva', cns: '112233445566778',
@@ -155,7 +157,7 @@ export const indigenas: Indigena[] = [
     nomeMae: 'Tereza Yanomami', nomePai: null,
     aldeiaId: 'ALD011', aldeia: 'Aldeia Demini',
     poloBaseId: 'PB005', poloBase: 'Polo Base Rio Negro',
-    etnia: 'Yanomami', acamado: false, contraindicacao: null,
+    etnia: 'Yanomami', acamado: false, situacao: 'PRESENTE', contraindicacoes: [], comorbidades: [],
   },
   {
     id: 'IND012', nome: 'Davi Tikuna Souza', cns: '223344556677889',
@@ -163,7 +165,7 @@ export const indigenas: Indigena[] = [
     nomeMae: 'Sara Tikuna', nomePai: 'Davi Tikuna Pai',
     aldeiaId: 'ALD003', aldeia: 'Aldeia São João',
     poloBaseId: 'PB001', poloBase: 'Polo Base Alto Solimões',
-    etnia: 'Tikuna', acamado: false, contraindicacao: null,
+    etnia: 'Tikuna', acamado: false, situacao: 'PRESENTE', contraindicacoes: [], comorbidades: [],
   },
 ];
 
@@ -182,6 +184,7 @@ export type DoseAplicada = {
   localAplicacao: string;
   vacinador: string;
   observacoes: string;
+  justificativaForaCalendario: string | null;
 };
 
 export const dosesAplicadas: DoseAplicada[] = [
@@ -191,7 +194,7 @@ export const dosesAplicadas: DoseAplicada[] = [
     dataAplicacao: '2023-08-14', lote: 'BCG240012',
     fabricante: 'Fund. Ataulpho de Paiva', validadeLote: '2025-06-30',
     viaAdministracao: 'Intradérmica', localAplicacao: 'Braço Direito',
-    vacinador: 'Enf. Carlos Alberto', observacoes: '',
+    vacinador: 'Enf. Carlos Alberto', observacoes: '', justificativaForaCalendario: null,
   },
   {
     id: 'DOSE002', indigenaId: 'IND001', vacinaId: 'V002',
@@ -199,7 +202,7 @@ export const dosesAplicadas: DoseAplicada[] = [
     dataAplicacao: '2023-08-14', lote: 'HEPB2400X',
     fabricante: 'Bio-Manguinhos', validadeLote: '2025-12-31',
     viaAdministracao: 'Intramuscular', localAplicacao: 'Coxa Esquerda',
-    vacinador: 'Enf. Carlos Alberto', observacoes: '',
+    vacinador: 'Enf. Carlos Alberto', observacoes: '', justificativaForaCalendario: null,
   },
   {
     id: 'DOSE003', indigenaId: 'IND002', vacinaId: 'V003',
@@ -207,7 +210,7 @@ export const dosesAplicadas: DoseAplicada[] = [
     dataAplicacao: '2021-05-22', lote: 'PENTA210034',
     fabricante: 'Bio-Manguinhos', validadeLote: '2025-08-31',
     viaAdministracao: 'Intramuscular', localAplicacao: 'Coxa Direita',
-    vacinador: 'Enf. Maria Conceição', observacoes: '',
+    vacinador: 'Enf. Maria Conceição', observacoes: '', justificativaForaCalendario: null,
   },
   {
     id: 'DOSE004', indigenaId: 'IND003', vacinaId: 'V004',
@@ -215,7 +218,7 @@ export const dosesAplicadas: DoseAplicada[] = [
     dataAplicacao: '2020-01-10', lote: 'VIP190023',
     fabricante: 'Bio-Manguinhos', validadeLote: '2026-03-31',
     viaAdministracao: 'Intramuscular', localAplicacao: 'Coxa Esquerda',
-    vacinador: 'Enf. Rosa Lima', observacoes: '',
+    vacinador: 'Enf. Rosa Lima', observacoes: '', justificativaForaCalendario: null,
   },
   {
     id: 'DOSE005', indigenaId: 'IND005', vacinaId: 'V001',
@@ -223,7 +226,7 @@ export const dosesAplicadas: DoseAplicada[] = [
     dataAplicacao: '2020-01-20', lote: 'BCG200015',
     fabricante: 'Fund. Ataulpho de Paiva', validadeLote: '2025-06-30',
     viaAdministracao: 'Intradérmica', localAplicacao: 'Braço Direito',
-    vacinador: 'Tec. João Paulo', observacoes: '',
+    vacinador: 'Tec. João Paulo', observacoes: '', justificativaForaCalendario: null,
   },
   {
     id: 'DOSE006', indigenaId: 'IND007', vacinaId: 'V008',
@@ -231,7 +234,7 @@ export const dosesAplicadas: DoseAplicada[] = [
     dataAplicacao: '2019-09-20', lote: 'FA190045',
     fabricante: 'Bio-Manguinhos', validadeLote: '2025-09-30',
     viaAdministracao: 'Subcutânea', localAplicacao: 'Braço Esquerdo',
-    vacinador: 'Enf. Maria Conceição', observacoes: 'Paciente sem reação adversa observada',
+    vacinador: 'Enf. Maria Conceição', observacoes: 'Paciente sem reação adversa observada', justificativaForaCalendario: null,
   },
   {
     id: 'DOSE007', indigenaId: 'IND009', vacinaId: 'V012',
@@ -239,7 +242,7 @@ export const dosesAplicadas: DoseAplicada[] = [
     dataAplicacao: '2024-03-15', lote: 'HPV240078',
     fabricante: 'MSD', validadeLote: '2026-06-30',
     viaAdministracao: 'Intramuscular', localAplicacao: 'Braço Direito',
-    vacinador: 'Tec. Anaísa Ferreira', observacoes: '',
+    vacinador: 'Tec. Anaísa Ferreira', observacoes: '', justificativaForaCalendario: null,
   },
   {
     id: 'DOSE008', indigenaId: 'IND010', vacinaId: 'V013',
@@ -247,7 +250,7 @@ export const dosesAplicadas: DoseAplicada[] = [
     dataAplicacao: '2024-01-10', lote: 'DT240012',
     fabricante: 'Bio-Manguinhos', validadeLote: '2026-01-31',
     viaAdministracao: 'Intramuscular', localAplicacao: 'Braço Esquerdo',
-    vacinador: 'Enf. Carlos Alberto', observacoes: '',
+    vacinador: 'Enf. Carlos Alberto', observacoes: '', justificativaForaCalendario: null,
   },
 ];
 

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import type { DoseAplicada } from '../data/mockData';
 import { indigenas, vacinas, vacinadores, dosesAplicadas } from '../data/mockData';
-import { Syringe, Search, AlertTriangle, CheckCircle } from 'lucide-react';
+import { Syringe, Search, AlertTriangle } from 'lucide-react';
 
 type Props = { showToast: (msg: string, type?: 'success' | 'error' | 'default') => void };
 
@@ -28,8 +28,10 @@ export default function RegistrarVacina({ showToast }: Props) {
 
   const indigenasFiltrados = busca.length >= 2
     ? indigenas.filter(i =>
+        i.situacao !== 'OBITO' && (
         i.nome.toLowerCase().includes(busca.toLowerCase()) ||
         i.cns.includes(busca)
+        )
       )
     : [];
 
@@ -54,6 +56,7 @@ export default function RegistrarVacina({ showToast }: Props) {
       localAplicacao: form.localAplicacao,
       vacinador: form.vacinador,
       observacoes: form.observacoes,
+      justificativaForaCalendario: null,
     };
     setDoses(prev => [nova, ...prev]);
     setForm(emptyForm);
@@ -161,12 +164,12 @@ export default function RegistrarVacina({ showToast }: Props) {
                   </div>
 
                   {/* ALERTAS DO PACIENTE */}
-                  {indigenaSelecionado.contraindicacao && (
+                  {indigenaSelecionado.contraindicacoes.length > 0 && (
                     <div className="alert alert-err" style={{ marginTop: 10 }}>
                       <AlertTriangle size={14} style={{ flexShrink: 0 }} />
                       <div>
-                        <strong>ATENÇÃO — Contraindicação registrada:</strong>
-                        <div style={{ marginTop: 2 }}>{indigenaSelecionado.contraindicacao}</div>
+                        <strong>ATENÇÃO — Contraindicações registradas:</strong>
+                        <div style={{ marginTop: 2 }}>{indigenaSelecionado.contraindicacoes.join(', ')}</div>
                       </div>
                     </div>
                   )}

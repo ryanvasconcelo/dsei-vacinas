@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import type { Indigena } from '../data/mockData';
 import { indigenas, polosBase, aldeias, etnias } from '../data/mockData';
-import { UserPlus, Search, Eye, X, ChevronRight } from 'lucide-react';
+import { UserPlus, Search, Eye, X } from 'lucide-react';
 import { formatNomeComMae } from '../utils/formatters';
+
+import TagInput from '../components/TagInput';
 
 type Props = { showToast: (msg: string, type?: 'success' | 'error' | 'default') => void };
 
@@ -12,8 +14,10 @@ const emptyForm = {
   nomeMae: '', nomePai: '',
   aldeiaId: '', poloBaseId: '',
   etnia: '',
+  situacao: 'PRESENTE' as 'PRESENTE' | 'AUSENTE' | 'OBITO',
   acamado: false, condicaoSaude: '',
-  contraindicacao: false, detalheContraindicacao: '',
+  contraindicacoes: [] as string[],
+  comorbidades: [] as string[],
 };
 
 export default function CadastroIndigena({ showToast }: Props) {
@@ -52,8 +56,10 @@ export default function CadastroIndigena({ showToast }: Props) {
       aldeiaId: form.aldeiaId, aldeia: aldeia?.nome ?? '',
       poloBaseId: form.poloBaseId, poloBase: polo?.nome ?? '',
       etnia: form.etnia,
+      situacao: form.situacao,
       acamado: form.acamado,
-      contraindicacao: form.contraindicacao ? form.detalheContraindicacao : null,
+      contraindicacoes: form.contraindicacoes,
+      comorbidades: form.comorbidades,
     };
     setLista(prev => [novo, ...prev]);
     setForm(emptyForm);
@@ -158,7 +164,9 @@ export default function CadastroIndigena({ showToast }: Props) {
                       <td style={{ fontSize: 11, color: '#888880' }}>{ind.poloBase.replace('Polo Base ', '')}</td>
                       <td style={{ fontSize: 11 }}>{idade}</td>
                       <td>
-                        {ind.contraindicacao ? (
+                        {ind.situacao === 'OBITO' ? (
+                          <span className="badge badge-default" style={{ background: '#222', color: '#fff' }}><span className="badge-dot" style={{ background: '#555' }} />Óbito</span>
+                        ) : ind.contraindicacoes.length > 0 ? (
                           <span className="badge badge-danger"><span className="badge-dot" />Contraindicação</span>
                         ) : ind.acamado ? (
                           <span className="badge badge-warning"><span className="badge-dot" />Acamado</span>
@@ -220,6 +228,13 @@ export default function CadastroIndigena({ showToast }: Props) {
                   {etnias.map(e => <option key={e} value={e}>{e}</option>)}
                 </select>
               ))}
+              {field('Situação', (
+                <select className="select" value={form.situacao} onChange={e => setForm({ ...form, situacao: e.target.value as any })}>
+                  <option value="PRESENTE">Presente na Aldeia</option>
+                  <option value="AUSENTE">Ausente (Viagem/Tratamento)</option>
+                  <option value="OBITO">Óbito</option>
+                </select>
+              ), true)}
             </div>
           </div>
 
@@ -279,24 +294,14 @@ export default function CadastroIndigena({ showToast }: Props) {
                     onChange={e => setForm({ ...form, condicaoSaude: e.target.value })} />
                 </div>
               )}
-              <label style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer' }}>
-                <input type="checkbox" checked={form.contraindicacao}
-                  onChange={e => setForm({ ...form, contraindicacao: e.target.checked })}
-                  style={{ width: 15, height: 15, accentColor: '#1A1916' }} />
-                <div>
-                  <div style={{ fontSize: 12, fontWeight: 500, color: '#1A1916' }}>Possui Contraindicação</div>
-                  <div style={{ fontSize: 10, color: '#888880' }}>Alerta será exibido ao registrar vacinas</div>
-                </div>
-              </label>
-              {form.contraindicacao && (
-                <div className="form-group">
-                  <label className="form-label">Detalhe da Contraindicação</label>
-                  <textarea className="textarea" style={{ minHeight: 60 }}
-                    placeholder="Ex: Alergia ao ovo (contraindicação FA), imunodeficiência primária..."
-                    value={form.detalheContraindicacao}
-                    onChange={e => setForm({ ...form, detalheContraindicacao: e.target.value })} />
-                </div>
-              )}
+              <div className="form-group">
+                <label className="form-label">Contraindicações</label>
+                <TagInput tags={form.contraindicacoes} onChange={tags => setForm({ ...form, contraindicacoes: tags })} placeholder="Ex: Alergia a ovo, Imunodeficiência..." />
+              </div>
+              <div className="form-group">
+                <label className="form-label">Comorbidades</label>
+                <TagInput tags={form.comorbidades} onChange={tags => setForm({ ...form, comorbidades: tags })} placeholder="Ex: Hipertensão, Diabetes..." />
+              </div>
             </div>
           </div>
 
@@ -339,18 +344,26 @@ export default function CadastroIndigena({ showToast }: Props) {
                 </div>
               ))}
             </div>
-            {(detalhe.acamado || detalhe.contraindicacao) && (
+            {(detalhe.acamado || detalhe.contraindicacoes.length > 0 || detalhe.comorbidades.length > 0) && (
               <div style={{ marginTop: '1rem', display: 'flex', flexDirection: 'column', gap: 6 }}>
                 {detalhe.acamado && (
                   <div className="alert alert-warn">
                     <span style={{ fontWeight: 500 }}>Paciente Acamado</span> — vacinação domiciliar
                   </div>
                 )}
-                {detalhe.contraindicacao && (
+                {detalhe.contraindicacoes.length > 0 && (
                   <div className="alert alert-err">
                     <div>
-                      <div style={{ fontWeight: 500 }}>⚠ Contraindicação Registrada</div>
-                      <div style={{ marginTop: 2 }}>{detalhe.contraindicacao}</div>
+                      <div style={{ fontWeight: 500 }}>⚠ Contraindicações Registradas</div>
+                      <div style={{ marginTop: 2 }}>{detalhe.contraindicacoes.join(', ')}</div>
+                    </div>
+                  </div>
+                )}
+                {detalhe.comorbidades.length > 0 && (
+                  <div className="alert alert-warn">
+                    <div>
+                      <div style={{ fontWeight: 500 }}>Comorbidades</div>
+                      <div style={{ marginTop: 2 }}>{detalhe.comorbidades.join(', ')}</div>
                     </div>
                   </div>
                 )}
