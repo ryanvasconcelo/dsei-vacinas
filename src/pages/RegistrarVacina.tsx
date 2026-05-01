@@ -5,7 +5,7 @@ import { Syringe, Search, AlertTriangle, AlertCircle } from 'lucide-react';
 import { isVacinaForaCalendario } from '../utils/vacinas';
 import { formatDateBR } from '../utils/formatters';
 import { useFilters } from '../hooks/useFilters';
-import { DataFilterPanel, FilterConfig } from '../components/ui/DataFilterPanel';
+import { DataFilterPanel, type FilterConfig } from '../components/ui/DataFilterPanel';
 
 type Props = { showToast: (msg: string, type?: 'success' | 'error' | 'default') => void };
 

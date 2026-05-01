@@ -5,7 +5,7 @@ import { db } from '../services/mockDatabase';
 import { UserPlus, Search, Eye, X } from 'lucide-react';
 import { formatNomeComMae, formatDateBR } from '../utils/formatters';
 import { useFilters } from '../hooks/useFilters';
-import { DataFilterPanel, FilterConfig } from '../components/ui/DataFilterPanel';
+import { DataFilterPanel, type FilterConfig } from '../components/ui/DataFilterPanel';
 
 import TagInput from '../components/TagInput';
 import MedicamentoList from '../components/MedicamentoList';
