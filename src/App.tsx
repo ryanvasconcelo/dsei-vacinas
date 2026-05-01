@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { BrowserRouter, Routes, Route, NavLink, Navigate } from 'react-router-dom';
 import {
   LayoutDashboard, Users, Syringe, FileText, CalendarDays,
-  Package, LogOut,
+  Package, LogOut, MapPin
 } from 'lucide-react';
 
 import Dashboard from './pages/Dashboard';
@@ -11,6 +11,7 @@ import RegistrarVacina from './pages/RegistrarVacina';
 import Relatorios from './pages/Relatorios';
 import CalendarioVacinal from './pages/CalendarioVacinal';
 import Estoque from './pages/Estoque';
+import CadastrosBase from './pages/CadastrosBase';
 import Login from './pages/Login';
 
 type ToastType = { id: number; message: string; type: 'success' | 'error' | 'default' };
@@ -33,6 +34,7 @@ function Sidebar({ onLogout }: { onLogout: () => void }) {
   const navItems = [
     { to: '/dashboard', label: 'Dashboard', icon: <LayoutDashboard size={13} /> },
     { to: '/cadastro', label: 'Cadastro de Indígena', icon: <Users size={13} /> },
+    { to: '/cadastros-base', label: 'Cadastros Base', icon: <MapPin size={13} /> },
     { to: '/vacinacao', label: 'Registrar Vacina', icon: <Syringe size={13} /> },
     { to: '/relatorios', label: 'Relatórios', icon: <FileText size={13} /> },
     { to: '/calendario', label: 'Calendário Vacinal', icon: <CalendarDays size={13} /> },
@@ -48,7 +50,7 @@ function Sidebar({ onLogout }: { onLogout: () => void }) {
       </div>
 
       <div className="sidebar-section">Principal</div>
-      {navItems.slice(0, 3).map(item => (
+      {navItems.slice(0, 4).map(item => (
         <NavLink
           key={item.to}
           to={item.to}
@@ -60,7 +62,7 @@ function Sidebar({ onLogout }: { onLogout: () => void }) {
       ))}
 
       <div className="sidebar-section">Análise</div>
-      {navItems.slice(3, 5).map(item => (
+      {navItems.slice(4, 6).map(item => (
         <NavLink
           key={item.to}
           to={item.to}
@@ -72,7 +74,7 @@ function Sidebar({ onLogout }: { onLogout: () => void }) {
       ))}
 
       <div className="sidebar-section">Operações</div>
-      {navItems.slice(5).map(item => (
+      {navItems.slice(6).map(item => (
         <NavLink
           key={item.to}
           to={item.to}
@@ -112,6 +114,7 @@ function AppLayout({ showToast, onLogout }: { showToast: (msg: string, type?: To
           <Route path="/" element={<Navigate to="/dashboard" replace />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/cadastro" element={<CadastroIndigena showToast={showToast} />} />
+          <Route path="/cadastros-base" element={<CadastrosBase showToast={showToast} />} />
           <Route path="/vacinacao" element={<RegistrarVacina showToast={showToast} />} />
           <Route path="/relatorios" element={<Relatorios />} />
           <Route path="/calendario" element={<CalendarioVacinal />} />
