@@ -26,9 +26,10 @@ export default function RegistrarVacina({ showToast }: Props) {
   const [form, setForm] = useState(emptyForm);
   const [doses, setDoses] = useState<DoseAplicada[]>(dosesAplicadas);
   const { filters, setFilter, resetFilters } = useFilters({
-    vacinaId: '',
-    vacinador: '',
-    numeroDose: ''
+    periodo: { start: '', end: '' },
+    vacinaIds: [] as string[],
+    vacinadorIds: [] as string[],
+    numeroDoseIds: [] as string[]
   });
   const [tab, setTab] = useState<'registrar' | 'historico'>('registrar');
   const [showJustificativa, setShowJustificativa] = useState(false);
@@ -47,16 +48,24 @@ export default function RegistrarVacina({ showToast }: Props) {
     : [];
 
   const historicoFiltrado = doses.filter(d => {
-    if (filters.vacinaId && d.vacinaId !== filters.vacinaId) return false;
-    if (filters.vacinador && d.vacinador !== filters.vacinador) return false;
-    if (filters.numeroDose && d.numeroDose !== filters.numeroDose) return false;
+    if (filters.vacinaIds.length > 0 && !filters.vacinaIds.includes(d.vacinaId)) return false;
+    if (filters.vacinadorIds.length > 0 && !filters.vacinadorIds.includes(d.vacinador)) return false;
+    if (filters.numeroDoseIds.length > 0 && !filters.numeroDoseIds.includes(d.numeroDose)) return false;
+    
+    if (filters.periodo?.start) {
+      if (d.dataAplicacao < filters.periodo.start) return false;
+    }
+    if (filters.periodo?.end) {
+      if (d.dataAplicacao > filters.periodo.end) return false;
+    }
     return true;
   });
 
   const filterConfig: FilterConfig<typeof filters>[] = [
-    { key: 'vacinaId', label: 'Vacina', type: 'select', options: vacinas.map(v => ({ value: v.id, label: v.sigla })) },
-    { key: 'vacinador', label: 'Vacinador', type: 'select', options: vacinadores.map(v => ({ value: v.nome, label: v.nome })) },
-    { key: 'numeroDose', label: 'Dose', type: 'select', options: numerosDose.map(d => ({ value: d, label: d })) },
+    { key: 'periodo', label: 'Período', type: 'date-range' },
+    { key: 'vacinaIds', label: 'Imunobiológico', type: 'multi-select', options: vacinas.map(v => ({ value: v.id, label: v.sigla })) },
+    { key: 'vacinadorIds', label: 'Vacinador', type: 'multi-select', options: vacinadores.map(v => ({ value: v.nome, label: v.nome })) },
+    { key: 'numeroDoseIds', label: 'Dose', type: 'multi-select', options: numerosDose.map(dose => ({ value: dose, label: dose })) },
   ];
 
   const handleSalvar = (e: React.FormEvent) => {

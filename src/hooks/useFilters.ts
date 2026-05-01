@@ -12,6 +12,12 @@ export function useFilters<T extends Record<string, string | boolean | string[]>
           (initial as any)[key] = value === 'true';
         } else if (Array.isArray(defaultVal)) {
           (initial as any)[key] = value.split(',').filter(Boolean);
+        } else if (typeof defaultVal === 'object' && defaultVal !== null) {
+          try {
+            (initial as any)[key] = JSON.parse(value);
+          } catch {
+            // fallback
+          }
         } else {
           (initial as any)[key] = value;
         }
@@ -31,6 +37,11 @@ export function useFilters<T extends Record<string, string | boolean | string[]>
           newParams.set(key, value);
         } else if (Array.isArray(value) && value.length > 0) {
           newParams.set(key, value.join(','));
+        } else if (typeof value === 'object' && value !== null) {
+          const hasData = Object.values(value).some(v => v !== '');
+          if (hasData) {
+            newParams.set(key, JSON.stringify(value));
+          }
         }
       });
       setSearchParams(newParams, { replace: true });

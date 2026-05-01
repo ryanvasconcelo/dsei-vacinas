@@ -31,11 +31,15 @@ export default function CadastroIndigena({ showToast }: Props) {
   const [lista, setLista] = useState<Indigena[]>(indigenas);
   const { filters, setFilter, resetFilters } = useFilters({
     busca: '',
-    poloBaseId: '',
-    aldeiaId: '',
-    etnia: '',
-    acamado: false,
-    contraindicacao: false
+    etniaIds: [] as string[],
+    poloBaseIds: [] as string[],
+    aldeiaIds: [] as string[],
+    faixaEtaria: '',
+    sexo: '',
+    situacao: '',
+    contraindicacao: false,
+    comorbidade: false,
+    emTratamento: false,
   });
   const [form, setForm] = useState(emptyForm);
   const [tab, setTab] = useState<'lista' | 'novo'>('lista');
@@ -52,23 +56,62 @@ export default function CadastroIndigena({ showToast }: Props) {
   const listaFiltrada = lista.filter(ind => {
     if (filters.busca && !(
       ind.nome.toLowerCase().includes(filters.busca.toLowerCase()) ||
+      ind.nomeMae.toLowerCase().includes(filters.busca.toLowerCase()) ||
+      (ind.nomePai && ind.nomePai.toLowerCase().includes(filters.busca.toLowerCase())) ||
       ind.cns.includes(filters.busca)
     )) return false;
-    if (filters.poloBaseId && ind.poloBaseId !== filters.poloBaseId) return false;
-    if (filters.aldeiaId && ind.aldeiaId !== filters.aldeiaId) return false;
-    if (filters.etnia && ind.etnia !== filters.etnia) return false;
-    if (filters.acamado && !ind.acamado) return false;
+
+    if (filters.poloBaseIds.length > 0 && !filters.poloBaseIds.includes(ind.poloBaseId)) return false;
+    if (filters.aldeiaIds.length > 0 && !filters.aldeiaIds.includes(ind.aldeiaId)) return false;
+    if (filters.etniaIds.length > 0 && !filters.etniaIds.includes(ind.etnia)) return false;
+
+    if (filters.faixaEtaria) {
+      const nasc = new Date(ind.dataNascimento);
+      const hoje = new Date();
+      let ageMonths = (hoje.getFullYear() - nasc.getFullYear()) * 12 + (hoje.getMonth() - nasc.getMonth());
+      let ageYears = Math.floor(ageMonths / 12);
+      
+      const faixas = {
+        '0-1m': ageMonths <= 1,
+        '1-12m': ageMonths > 1 && ageMonths <= 12,
+        '1-4a': ageYears >= 1 && ageYears <= 4,
+        '5-9a': ageYears >= 5 && ageYears <= 9,
+        '10-19a': ageYears >= 10 && ageYears <= 19,
+        '20-59a': ageYears >= 20 && ageYears <= 59,
+        '60+': ageYears >= 60
+      };
+      if (!(faixas as any)[filters.faixaEtaria]) return false;
+    }
+
+    if (filters.sexo && ind.sexo !== filters.sexo) return false;
+    if (filters.situacao && ind.situacao !== filters.situacao) return false;
     if (filters.contraindicacao && ind.contraindicacoes.length === 0) return false;
+    if (filters.comorbidade && ind.comorbidades.length === 0) return false;
+    if (filters.emTratamento && !ind.emTratamento) return false;
+
     return true;
   });
 
+  const aldeiasOptions = aldeias
+    .filter(a => filters.poloBaseIds.length === 0 || filters.poloBaseIds.includes(a.poloBaseId))
+    .map(a => ({ value: a.id, label: a.nome }));
+
   const filterConfig: FilterConfig<typeof filters>[] = [
-    { key: 'busca', label: 'Busca', type: 'text', placeholder: 'Nome ou CNS...' },
-    { key: 'poloBaseId', label: 'Polo Base', type: 'select', options: polosBase.map(p => ({ value: p.id, label: p.nome })) },
-    { key: 'aldeiaId', label: 'Aldeia', type: 'select', options: aldeias.map(a => ({ value: a.id, label: a.nome })) },
-    { key: 'etnia', label: 'Etnia', type: 'select', options: etnias.map(e => ({ value: e.nome, label: e.nome })) },
-    { key: 'acamado', label: 'Acamados', type: 'boolean' },
-    { key: 'contraindicacao', label: 'Com Contraindicação', type: 'boolean' },
+    { key: 'busca', label: 'Busca livre', type: 'text', placeholder: 'Nome, Pais ou CNS...' },
+    { key: 'etniaIds', label: 'Etnia', type: 'multi-select', options: etnias.map(e => ({ value: e.nome, label: e.nome })) },
+    { key: 'poloBaseIds', label: 'Polo Base', type: 'multi-select', options: polosBase.map(p => ({ value: p.id, label: p.nome })) },
+    { key: 'aldeiaIds', label: 'Aldeia', type: 'multi-select', options: aldeiasOptions },
+    { key: 'faixaEtaria', label: 'Faixa Etária', type: 'select', options: [
+      {value: '0-1m', label: '0 a 1 mês'}, {value: '1-12m', label: '1 a 12 meses'},
+      {value: '1-4a', label: '1 a 4 anos'}, {value: '5-9a', label: '5 a 9 anos'},
+      {value: '10-19a', label: '10 a 19 anos'}, {value: '20-59a', label: '20 a 59 anos'},
+      {value: '60+', label: '60+ anos'}
+    ]},
+    { key: 'sexo', label: 'Sexo', type: 'select', options: [{value: 'M', label: 'Masculino'}, {value: 'F', label: 'Feminino'}, {value: 'Outro', label: 'Outro'}] },
+    { key: 'situacao', label: 'Situação', type: 'select', options: [{value: 'PRESENTE', label: 'Presente'}, {value: 'AUSENTE', label: 'Ausente'}, {value: 'OBITO', label: 'Óbito'}] },
+    { key: 'contraindicacao', label: 'Possui Contraindicação', type: 'boolean' },
+    { key: 'comorbidade', label: 'Possui Comorbidade', type: 'boolean' },
+    { key: 'emTratamento', label: 'Em Tratamento', type: 'boolean' },
   ];
 
   const handleSalvar = (e: React.FormEvent) => {

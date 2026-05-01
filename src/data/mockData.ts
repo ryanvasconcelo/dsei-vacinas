@@ -89,104 +89,43 @@ export type Indigena = {
   medicamentosEmUso?: Medicamento[];
 };
 
-export const indigenas: Indigena[] = [
-  {
-    id: 'IND001', nome: 'Marcos Tikuna da Silva', cns: '123456789012345',
-    cpf: null, dataNascimento: '2023-08-12', sexo: 'M',
-    nomeMae: 'Ana Maria Tikuna', nomePai: 'José Tikuna da Silva',
-    aldeiaId: 'ALD001', aldeia: 'Aldeia Umariaçu I',
-    poloBaseId: 'PB001', poloBase: 'Polo Base Alto Solimões',
-    etnia: 'Tikuna', acamado: false, situacao: 'PRESENTE', contraindicacoes: [], comorbidades: [],
-  },
-  {
-    id: 'IND002', nome: 'Maria das Graças Kokama', cns: '234567890123456',
-    cpf: '234.567.890-12', dataNascimento: '2021-03-22', sexo: 'F',
-    nomeMae: 'Conceição Kokama', nomePai: null,
-    aldeiaId: 'ALD001', aldeia: 'Aldeia Umariaçu I',
-    poloBaseId: 'PB001', poloBase: 'Polo Base Alto Solimões',
-    etnia: 'Kokama', acamado: false, situacao: 'PRESENTE', contraindicacoes: [], comorbidades: [],
-  },
-  {
-    id: 'IND003', nome: 'Pedro Yanomami Ferreira', cns: '345678901234567',
-    cpf: null, dataNascimento: '2019-11-05', sexo: 'M',
-    nomeMae: 'Rosa Yanomami', nomePai: 'Luis Yanomami Ferreira',
-    aldeiaId: 'ALD011', aldeia: 'Aldeia Demini',
-    poloBaseId: 'PB005', poloBase: 'Polo Base Rio Negro',
-    etnia: 'Yanomami', acamado: false, situacao: 'PRESENTE', contraindicacoes: [], comorbidades: [],
-  },
-  {
-    id: 'IND004', nome: 'Antônia Baré Nascimento', cns: '456789012345678',
-    cpf: '456.789.012-34', dataNascimento: '1958-07-30', sexo: 'F',
-    nomeMae: 'Francisca Baré', nomePai: 'António Baré',
-    aldeiaId: 'ALD012', aldeia: 'Aldeia Maturacá',
-    poloBaseId: 'PB005', poloBase: 'Polo Base Rio Negro',
-    etnia: 'Baré', acamado: true, situacao: 'PRESENTE', contraindicacoes: ['Hipertensão controlada — verificar antes de aplicar'], comorbidades: [],
-  },
-  {
-    id: 'IND005', nome: 'João Kanamari de Souza', cns: '567890123456789',
-    cpf: null, dataNascimento: '2020-01-15', sexo: 'M',
-    nomeMae: 'Luzia Kanamari', nomePai: 'Raimundo Kanamari',
-    aldeiaId: 'ALD009', aldeia: 'Aldeia Ituí',
-    poloBaseId: 'PB004', poloBase: 'Polo Base Vale do Javari',
-    etnia: 'Kanamari', acamado: false, situacao: 'PRESENTE', contraindicacoes: [], comorbidades: [],
-  },
-  {
-    id: 'IND006', nome: 'Cláudia Paumari Lima', cns: '678901234567890',
-    cpf: '678.901.234-56', dataNascimento: '2022-05-20', sexo: 'F',
-    nomeMae: 'Irene Paumari Lima', nomePai: null,
-    aldeiaId: 'ALD007', aldeia: 'Aldeia Pauini',
-    poloBaseId: 'PB003', poloBase: 'Polo Base Purus',
-    etnia: 'Paumari', acamado: false, situacao: 'PRESENTE', contraindicacoes: [], comorbidades: [],
-  },
-  {
-    id: 'IND007', nome: 'Francisco Sateré Moraes', cns: '789012345678901',
-    cpf: null, dataNascimento: '2018-09-10', sexo: 'M',
-    nomeMae: 'Benedita Sateré', nomePai: 'Manoel Sateré Moraes',
-    aldeiaId: 'ALD004', aldeia: 'Aldeia Betel',
-    poloBaseId: 'PB002', poloBase: 'Polo Base Médio Solimões',
-    etnia: 'Sateré-Mawé', acamado: false, situacao: 'PRESENTE', contraindicacoes: ['Alergia a ovo — contraindicação FA'], comorbidades: [],
-  },
-  {
-    id: 'IND008', nome: 'Raimunda Tikuna Costa', cns: '890123456789012',
-    cpf: '890.123.456-78', dataNascimento: '2023-12-01', sexo: 'F',
-    nomeMae: 'Tereza Tikuna Costa', nomePai: 'Carlos Tikuna Costa',
-    aldeiaId: 'ALD002', aldeia: 'Aldeia Umariaçu II',
-    poloBaseId: 'PB001', poloBase: 'Polo Base Alto Solimões',
-    etnia: 'Tikuna', acamado: false, situacao: 'PRESENTE', contraindicacoes: [], comorbidades: [],
-  },
-  {
-    id: 'IND009', nome: 'Sebastião Matis Pereira', cns: '901234567890123',
-    cpf: null, dataNascimento: '2015-06-18', sexo: 'M',
-    nomeMae: 'Iracema Matis', nomePai: 'Sebastião Matis Pai',
-    aldeiaId: 'ALD010', aldeia: 'Aldeia Itacoaí',
-    poloBaseId: 'PB004', poloBase: 'Polo Base Vale do Javari',
-    etnia: 'Matis', acamado: false, situacao: 'PRESENTE', contraindicacoes: [], comorbidades: [],
-  },
-  {
-    id: 'IND010', nome: 'Elenice Deni Santos', cns: '012345678901234',
-    cpf: '012.345.678-90', dataNascimento: '1992-04-03', sexo: 'F',
-    nomeMae: 'Olinda Deni', nomePai: 'Olimpio Deni Santos',
-    aldeiaId: 'ALD008', aldeia: 'Aldeia Tapauá',
-    poloBaseId: 'PB003', poloBase: 'Polo Base Purus',
-    etnia: 'Deni', acamado: false, situacao: 'PRESENTE', contraindicacoes: [], comorbidades: [],
-  },
-  {
-    id: 'IND011', nome: 'Naiara Yanomami Silva', cns: '112233445566778',
-    cpf: null, dataNascimento: '2024-02-14', sexo: 'F',
-    nomeMae: 'Tereza Yanomami', nomePai: null,
-    aldeiaId: 'ALD011', aldeia: 'Aldeia Demini',
-    poloBaseId: 'PB005', poloBase: 'Polo Base Rio Negro',
-    etnia: 'Yanomami', acamado: false, situacao: 'PRESENTE', contraindicacoes: [], comorbidades: [],
-  },
-  {
-    id: 'IND012', nome: 'Davi Tikuna Souza', cns: '223344556677889',
-    cpf: null, dataNascimento: '2022-11-30', sexo: 'M',
-    nomeMae: 'Sara Tikuna', nomePai: 'Davi Tikuna Pai',
-    aldeiaId: 'ALD003', aldeia: 'Aldeia São João',
-    poloBaseId: 'PB001', poloBase: 'Polo Base Alto Solimões',
-    etnia: 'Tikuna', acamado: false, situacao: 'PRESENTE', contraindicacoes: [], comorbidades: [],
-  },
-];
+
+export const indigenas: Indigena[] = Array.from({ length: 50 }).map((_, i) => {
+  const etniasDisp = etnias.map(e => e.nome);
+  const polosDisp = polosBase;
+  const p = polosDisp[i % polosDisp.length];
+  const aldeiasDisp = aldeias.filter(a => a.poloBaseId === p.id);
+  const a = aldeiasDisp[i % aldeiasDisp.length] || aldeias[0];
+  const isAcamado = Math.random() > 0.8;
+  const isTratamento = Math.random() > 0.8;
+  const hasContra = Math.random() > 0.8;
+  const hasComorb = Math.random() > 0.7;
+  
+  return {
+    id: `IND${i.toString().padStart(4, '0')}`,
+    nome: `Paciente Mockado ${i+1}`,
+    nomeMae: `Mãe do Paciente ${i+1}`,
+    nomePai: Math.random() > 0.3 ? `Pai do Paciente ${i+1}` : null,
+    cns: `7${Math.floor(Math.random() * 90000000000000).toString().padStart(14, '0')}`,
+    cpf: Math.random() > 0.5 ? `${Math.floor(Math.random() * 900).toString().padStart(3, '0')}.${Math.floor(Math.random() * 900).toString().padStart(3, '0')}.${Math.floor(Math.random() * 900).toString().padStart(3, '0')}-${Math.floor(Math.random() * 90).toString().padStart(2, '0')}` : null,
+    dataNascimento: new Date(Date.now() - Math.random() * 80 * 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+    sexo: Math.random() > 0.5 ? 'M' : 'F',
+    etnia: etniasDisp[i % etniasDisp.length],
+    aldeiaId: a.id,
+    aldeia: a.nome,
+    poloBaseId: p.id,
+    poloBase: p.nome,
+    situacao: Math.random() > 0.9 ? 'AUSENTE' : Math.random() > 0.95 ? 'OBITO' : 'PRESENTE',
+    acamado: isAcamado,
+    condicaoSaude: isAcamado ? 'Dificuldade de locomoção' : '',
+    contraindicacoes: hasContra ? ['Alergia a proteína do ovo'] : [],
+    comorbidades: hasComorb ? ['Diabetes Tipo 2'] : [],
+    emTratamento: isTratamento,
+    tratamentoDescricao: isTratamento ? 'Quimioterapia em curso' : null,
+    medicamentosEmUso: isTratamento ? [{id: `med${i}`, nome: 'Rituximabe', dosagem: '10mg', frequencia: 'Mensal'}] : []
+  };
+});
+
 
 export type DoseAplicada = {
   id: string;

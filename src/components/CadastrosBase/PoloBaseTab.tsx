@@ -1,13 +1,34 @@
 import React, { useState } from 'react';
 import { db } from '../../services/mockDatabase';
+import { indigenas } from '../../data/mockData';
 import { SlideOver } from '../ui/SlideOver';
+import { DataFilterPanel, type FilterConfig } from '../ui/DataFilterPanel';
+import { useFilters } from '../../hooks/useFilters';
 import { Plus, Edit2, Trash2 } from 'lucide-react';
 
 export default function PoloBaseTab({ showToast }: { showToast: (msg: string, type?: 'success' | 'error' | 'default') => void }) {
   const [lista, setLista] = useState(() => db.polos.list(true));
+  const { filters, setFilter, resetFilters } = useFilters({ busca: '' });
   const [isSlideOpen, setIsSlideOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState({ nome: '', municipio: '' });
+
+  const filterConfig: FilterConfig<typeof filters>[] = [
+    { key: 'busca', label: 'Polo Base', type: 'text', placeholder: 'Buscar polo ou município...' },
+  ];
+
+  const polosFiltrados = lista.filter(p => 
+    p.nome.toLowerCase().includes(filters.busca.toLowerCase()) ||
+    (p.municipio && p.municipio.toLowerCase().includes(filters.busca.toLowerCase()))
+  );
+
+  const getAldeiaCount = (poloId: string) => {
+    return db.aldeias.list(true).filter(a => a.poloBaseId === poloId).length;
+  };
+
+  const getPatientCount = (poloId: string) => {
+    return indigenas.filter(i => i.poloBaseId === poloId).length;
+  };
 
   const handleOpenNew = () => {
     setEditingId(null);
@@ -30,6 +51,16 @@ export default function PoloBaseTab({ showToast }: { showToast: (msg: string, ty
       showToast('Nome e município devem ter pelo menos 3 caracteres.', 'error');
       return;
     }
+    
+    // Validar nome único
+    const exists = db.polos.list(true).some(p => 
+      p.nome.toLowerCase() === form.nome.trim().toLowerCase() && p.id !== editingId
+    );
+    if (exists) {
+      showToast('Já existe um Polo Base com este nome.', 'error');
+      return;
+    }
+
     if (editingId) {
       db.polos.update(editingId, { nome: form.nome.trim(), municipio: form.municipio.trim() });
       showToast('Polo Base atualizado com sucesso.', 'success');
@@ -43,7 +74,8 @@ export default function PoloBaseTab({ showToast }: { showToast: (msg: string, ty
 
   const handleToggleActive = (id: string, ativo: boolean) => {
     if (ativo) {
-      if (window.confirm('Desativar este Polo Base também desativará todas as suas Aldeias em cascata. Deseja continuar?')) {
+      const patientCount = getPatientCount(id);
+      if (window.confirm(`${patientCount} pacientes vinculados — desativar este Polo Base também desativará todas as suas Aldeias em cascata. Deseja continuar?`)) {
         db.polos.softDelete(id);
         setLista(db.polos.list(true));
         showToast('Polo Base e aldeias vinculadas desativadas.', 'default');
@@ -67,21 +99,32 @@ export default function PoloBaseTab({ showToast }: { showToast: (msg: string, ty
         </button>
       </div>
 
+      <DataFilterPanel 
+        filters={filters} 
+        config={filterConfig} 
+        onFilterChange={setFilter as any} 
+        onClear={resetFilters} 
+      />
+
       <div className="table-wrap">
         <table className="ds-table">
           <thead>
             <tr>
               <th>Nome do Polo Base</th>
               <th>Município SEDE</th>
+              <th style={{ textAlign: 'center' }}>Aldeias</th>
+              <th style={{ textAlign: 'center' }}>Pacientes</th>
               <th>Status</th>
               <th>Ações</th>
             </tr>
           </thead>
           <tbody>
-            {lista.map(polo => (
+            {polosFiltrados.map(polo => (
               <tr key={polo.id} style={{ opacity: polo.ativo ? 1 : 0.6 }}>
                 <td style={{ fontWeight: 500 }}>{polo.nome}</td>
                 <td>{polo.municipio}</td>
+                <td style={{ textAlign: 'center', fontSize: '0.875rem' }}>{getAldeiaCount(polo.id)}</td>
+                <td style={{ textAlign: 'center', fontSize: '0.875rem' }}>{getPatientCount(polo.id)}</td>
                 <td>
                   {polo.ativo ? (
                     <span className="badge badge-success"><span className="badge-dot" />Ativo</span>
@@ -104,8 +147,8 @@ export default function PoloBaseTab({ showToast }: { showToast: (msg: string, ty
                 </td>
               </tr>
             ))}
-            {lista.length === 0 && (
-              <tr><td colSpan={4} style={{ textAlign: 'center', padding: '2rem' }}>Nenhum polo base encontrado.</td></tr>
+            {polosFiltrados.length === 0 && (
+              <tr><td colSpan={6} style={{ textAlign: 'center', padding: '2rem' }}>Nenhum polo base encontrado.</td></tr>
             )}
           </tbody>
         </table>

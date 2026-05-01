@@ -1,14 +1,36 @@
 import React, { useState } from 'react';
 import { db } from '../../services/mockDatabase';
+import { indigenas } from '../../data/mockData';
 import { SlideOver } from '../ui/SlideOver';
+import { DataFilterPanel, type FilterConfig } from '../ui/DataFilterPanel';
+import { useFilters } from '../../hooks/useFilters';
 import { Plus, Edit2, Trash2 } from 'lucide-react';
 
 export default function AldeiaTab({ showToast }: { showToast: (msg: string, type?: 'success' | 'error' | 'default') => void }) {
   const [lista, setLista] = useState(() => db.aldeias.list(true));
-  const polosAtivos = db.polos.list(); // Only active polos for creation
+  const polos = db.polos.list(true);
+  const { filters, setFilter, resetFilters } = useFilters({ 
+    busca: '',
+    poloBaseIds: [] as string[]
+  });
   const [isSlideOpen, setIsSlideOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState({ nome: '', poloBaseId: '' });
+
+  const filterConfig: FilterConfig<typeof filters>[] = [
+    { key: 'busca', label: 'Nome da Aldeia', type: 'text', placeholder: 'Buscar aldeia...' },
+    { key: 'poloBaseIds', label: 'Polo Base', type: 'multi-select', options: polos.map(p => ({ value: p.id, label: p.nome })) },
+  ];
+
+  const aldeiasFiltradas = lista.filter(a => {
+    if (filters.busca && !a.nome.toLowerCase().includes(filters.busca.toLowerCase())) return false;
+    if (filters.poloBaseIds.length > 0 && !filters.poloBaseIds.includes(a.poloBaseId)) return false;
+    return true;
+  });
+
+  const getPatientCount = (aldeiaId: string) => {
+    return indigenas.filter(i => i.aldeiaId === aldeiaId).length;
+  };
 
   const handleOpenNew = () => {
     setEditingId(null);
@@ -35,6 +57,18 @@ export default function AldeiaTab({ showToast }: { showToast: (msg: string, type
       showToast('Selecione um Polo Base.', 'error');
       return;
     }
+
+    // Validar nome único no mesmo polo
+    const exists = db.aldeias.list(true).some(a => 
+      a.nome.toLowerCase() === form.nome.trim().toLowerCase() && 
+      a.poloBaseId === form.poloBaseId &&
+      a.id !== editingId
+    );
+    if (exists) {
+      showToast('Já existe uma aldeia com este nome neste Polo Base.', 'error');
+      return;
+    }
+
     if (editingId) {
       db.aldeias.update(editingId, { nome: form.nome.trim(), poloBaseId: form.poloBaseId });
       showToast('Aldeia atualizada com sucesso.', 'success');
@@ -48,7 +82,8 @@ export default function AldeiaTab({ showToast }: { showToast: (msg: string, type
 
   const handleToggleActive = (id: string, ativo: boolean) => {
     if (ativo) {
-      if (window.confirm('Desativar esta aldeia a ocultará dos novos cadastros. Continuar?')) {
+      const patientCount = getPatientCount(id);
+      if (window.confirm(`${patientCount} pacientes vinculados — eles continuarão exibidos com esta aldeia, mas ela não aparecerá em novos cadastros. Continuar?`)) {
         db.aldeias.softDelete(id);
         setLista(db.aldeias.list(true));
         showToast('Aldeia desativada.', 'default');
@@ -72,23 +107,32 @@ export default function AldeiaTab({ showToast }: { showToast: (msg: string, type
         </button>
       </div>
 
+      <DataFilterPanel 
+        filters={filters} 
+        config={filterConfig} 
+        onFilterChange={setFilter as any} 
+        onClear={resetFilters} 
+      />
+
       <div className="table-wrap">
         <table className="ds-table">
           <thead>
             <tr>
               <th>Nome da Aldeia</th>
               <th>Polo Base Vinculado</th>
+              <th style={{ textAlign: 'center' }}>Pacientes</th>
               <th>Status</th>
               <th>Ações</th>
             </tr>
           </thead>
           <tbody>
-            {lista.map(aldeia => {
+            {aldeiasFiltradas.map(aldeia => {
               const polo = db.polos.get(aldeia.poloBaseId);
               return (
                 <tr key={aldeia.id} style={{ opacity: aldeia.ativo ? 1 : 0.6 }}>
                   <td style={{ fontWeight: 500 }}>{aldeia.nome}</td>
                   <td style={{ fontSize: '0.875rem', color: '#555550' }}>{polo?.nome || 'Polo Desconhecido'}</td>
+                  <td style={{ textAlign: 'center', fontSize: '0.875rem' }}>{getPatientCount(aldeia.id)}</td>
                   <td>
                     {aldeia.ativo ? (
                       <span className="badge badge-success"><span className="badge-dot" />Ativo</span>
@@ -112,8 +156,8 @@ export default function AldeiaTab({ showToast }: { showToast: (msg: string, type
                 </tr>
               );
             })}
-            {lista.length === 0 && (
-              <tr><td colSpan={4} style={{ textAlign: 'center', padding: '2rem' }}>Nenhuma aldeia encontrada.</td></tr>
+            {aldeiasFiltradas.length === 0 && (
+              <tr><td colSpan={5} style={{ textAlign: 'center', padding: '2rem' }}>Nenhuma aldeia encontrada.</td></tr>
             )}
           </tbody>
         </table>
@@ -139,7 +183,7 @@ export default function AldeiaTab({ showToast }: { showToast: (msg: string, type
               onChange={e => setForm({ ...form, poloBaseId: e.target.value })}
             >
               <option value="">Selecione o Polo Base...</option>
-              {polosAtivos.map(p => (
+              {polos.filter(p => p.ativo).map(p => (
                 <option key={p.id} value={p.id}>{p.nome}</option>
               ))}
             </select>
